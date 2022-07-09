@@ -15,6 +15,7 @@ class coach extends Model
         'password',
         'birthday',
         'phone_number',
+        'img_url'
     ];
     protected $hidden=[
         'password'

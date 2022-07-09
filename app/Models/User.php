@@ -26,6 +26,7 @@ class User extends Authenticatable
         'height',
         'weight',
         'phone_number',
+        'img_url'
     ];
 
     /**
