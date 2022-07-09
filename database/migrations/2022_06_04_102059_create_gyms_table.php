@@ -17,6 +17,7 @@ class CreateGymsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('address');
+            $table->string('logo_url')->nullable();
             $table->timestamps();
         });
     }
