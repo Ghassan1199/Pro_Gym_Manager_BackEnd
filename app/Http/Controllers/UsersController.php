@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\gym;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
@@ -30,7 +33,7 @@ class UsersController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,User $user)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -39,12 +42,20 @@ class UsersController extends Controller
             'height' => 'required',
             'weight' => 'required',
             'birthday' => 'required',
-            'gym_id'=>'required'
         ]);
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
+        $user->name=$request->name;
+        $user->password=$request->password;
+        $user->email=$request->email;
+        $user->height=$request->height;
+        $user->weight=$request->weight;
+        $user->birthday=$request->birthday;
+        $user->gym_id=gym::where('admin_id','=',auth('admin-api')->id())->value('admin_id');
+        $user->save();
+        return response($user);
     }
 
     /**

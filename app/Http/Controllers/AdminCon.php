@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
+use App\Models\coach;
 use App\Models\gym;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -66,7 +67,8 @@ class AdminCon extends Controller
     public function show($id)
     {
         $res = admin::find($id);
-        return response([$res], 200);    }
+        return response([$res], 200);   
+    }
 
     /**
      * Update the specified resource in storage.
@@ -80,14 +82,6 @@ class AdminCon extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\admin  $admin
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(admin $admin)
-    {
-        //
-    }
+
+
 }
