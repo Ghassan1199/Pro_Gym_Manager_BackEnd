@@ -42,6 +42,11 @@ class UsersController extends Controller
             'height' => 'required',
             'weight' => 'required',
             'birthday' => 'required',
+            'coach_id'=>'required',
+            'starts_at'=>'required',
+            'ends_at'=>'required',
+            'private'=>'required',
+
         ]);
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
@@ -54,7 +59,19 @@ class UsersController extends Controller
         $user->weight=$request->weight;
         $user->birthday=$request->birthday;
         $user->gym_id=gym::where('admin_id','=',auth('admin-api')->id())->value('admin_id');
+
+
         $user->save();
+        $user->subscription()->create([
+            'user_id'=>$user->id,
+            'starts_at'=>$request->starts_at,
+            'ends_at'=>$request->ends_at,
+            'private'=>$request->private,
+            'price'=>$request->price,
+            'paid_amount'=>$request->paid_amount,
+            'fully_paid'=>$request->fully_paid,
+            'coach_id'=>$request->coach_id
+        ]);
         return response($user);
     }
 

@@ -17,11 +17,17 @@ class subscription extends Model
         'price',
         'paid_amount',
         'fully_paid',
+        'coach_id',
+        'user_id'
     ];
 
     public function coach()
     {
         return $this->belongsTo(coach::class, 'coach_id');
+    }
+
+    public function User(){
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function days()
