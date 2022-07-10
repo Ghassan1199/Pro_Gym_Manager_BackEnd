@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminCon;
+use App\Http\Controllers\CoachController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -26,3 +27,4 @@ Route::post('register_admin',[AdminCon::class,'store']);
 Route::get('admin_details/{id}',[AdminCon::class,'show']);
 Route::post('admin_login',[LoginController::class,'adminLogin']);
 Route::post('create_user',[UsersController::class,'store']);
+Route::post('create_coach',[CoachController::class,'store']);
