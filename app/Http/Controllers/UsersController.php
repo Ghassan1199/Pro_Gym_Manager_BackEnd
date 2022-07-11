@@ -77,6 +77,10 @@ class UsersController extends Controller
             'price' => 'required'
 
         ]);
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response(['msg' => $msg], 400);
+        }
 
         $sub = [
             'user_id' => $user->id,
