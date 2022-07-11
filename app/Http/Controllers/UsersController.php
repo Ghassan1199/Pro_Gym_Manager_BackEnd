@@ -33,46 +33,64 @@ class UsersController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,User $user)
+    public function store(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
             'password' => 'required',
             'email' => 'required|unique:users',
             'height' => 'required',
             'weight' => 'required',
             'birthday' => 'required',
-            'coach_id'=>'required',
-            'starts_at'=>'required',
-            'ends_at'=>'required',
-            'private'=>'required',
-
         ]);
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
-        $user->name=$request->name;
-        $user->password=$request->password;
-        $user->email=$request->email;
-        $user->height=$request->height;
-        $user->weight=$request->weight;
-        $user->birthday=$request->birthday;
-        $user->gym_id=gym::where('admin_id','=',auth('admin-api')->id())->value('admin_id');
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->password = $request->password;
+        $user->email = $request->email;
+        $user->height = $request->height;
+        $user->weight = $request->weight;
+        $user->birthday = $request->birthday;
+        $user->gym_id = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
 
 
         $user->save();
-        $user->subscription()->create([
-            'user_id'=>$user->id,
-            'starts_at'=>$request->starts_at,
-            'ends_at'=>$request->ends_at,
-            'private'=>$request->private,
-            'price'=>$request->price,
-            'paid_amount'=>$request->paid_amount,
-            'fully_paid'=>$request->fully_paid,
-            'coach_id'=>$request->coach_id
-        ]);
+
         return response($user);
+    }
+
+    public function create_sup(Request $request)
+    {
+        $user = User::find($request->user_id);
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'coach_id' => 'required',
+            'starts_at' => 'required',
+            'ends_at' => 'required',
+            'private' => 'required',
+            'paid_amount' => 'required',
+            'fully_paid' => 'required',
+            'price' => 'required'
+
+        ]);
+
+        $sub = [
+            'user_id' => $user->id,
+            'starts_at' => $request->starts_at,
+            'ends_at' => $request->ends_at,
+            'private' => $request->private,
+            'price' => $request->price,
+            'paid_amount' => $request->paid_amount,
+            'fully_paid' => $request->fully_paid,
+            'coach_id' => $request->coach_id
+        ];
+
+        $user->subscription()->create($sub);
+        return response($sub);
     }
 
     /**
@@ -83,8 +101,8 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $user=User::find($id);
-        return response($user,200);
+        $user = User::find($id);
+        return response($user, 200);
     }
 
     /**
@@ -107,7 +125,7 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user=User::find($id);
+        $user = User::find($id);
         if ($request['phone_number']) {
             $user['phone_number'] = $request['phone_number'];
         }
@@ -115,7 +133,7 @@ class UsersController extends Controller
             $user['weight'] = $request['weight'];
         }
         $user->save();
-        return response($user,200);
+        return response($user, 200);
     }
 
     /**

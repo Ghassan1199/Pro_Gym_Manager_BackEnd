@@ -29,7 +29,8 @@ class CoachController extends Controller
     public function store(Request $request,coach $coach)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'first_name' => 'required',
+            'last_name'=>'required',
             'password' => 'required',
             'email' => 'required|unique:users',
             'birthday' => 'required',
@@ -42,7 +43,8 @@ class CoachController extends Controller
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
-        $coach->name=$request->name;
+        $coach->first_name=$request->first_name;
+        $coach->last_name=$request->last_name;
         $coach->password=$request->password;
         $coach->email=$request->email;
         $coach->birthday=$request->birthday;

@@ -28,3 +28,4 @@ Route::get('admin_details/{id}',[AdminCon::class,'show']);
 Route::post('admin_login',[LoginController::class,'adminLogin']);
 Route::post('create_user',[UsersController::class,'store']);
 Route::post('create_coach',[CoachController::class,'store']);
+Route::post('create_sub_user',[UsersController::class,'create_sup']);
