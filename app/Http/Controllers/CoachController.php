@@ -35,9 +35,6 @@ class CoachController extends Controller
             'password' => 'required',
             'email' => 'required|unique:users',
             'birthday' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'salary' => 'required'
         ]);
 
         if ($validator->fails()) {

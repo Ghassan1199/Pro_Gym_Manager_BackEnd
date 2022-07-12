@@ -48,6 +48,7 @@ class UsersController extends Controller
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
+        
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->password = $request->password;
