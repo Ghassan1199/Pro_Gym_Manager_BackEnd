@@ -30,3 +30,4 @@ Route::post('create_user',[UsersController::class,'store']);
 Route::post('create_coach',[CoachController::class,'store']);
 Route::post('create_sub_user',[UsersController::class,'create_sup']);
 Route::post('create_contract',[CoachController::class,'create_cont']);
+Route::post('create_qual',[CoachController::class,'create_qual']);

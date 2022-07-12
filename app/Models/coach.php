@@ -39,7 +39,7 @@ class coach extends Model
 
     public function qualifications()
     {
-        return $this->belongsToMany(qualifications::class, 'coach_qual',
+        return $this->belongsToMany(qualifications::class, 'coach_quals',
             'coach_id', 'qual_id');
     }
 

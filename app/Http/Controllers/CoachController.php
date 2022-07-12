@@ -55,6 +55,16 @@ class CoachController extends Controller
         return response($coach, 200);
     }
 
+    public function create_qual(Request $request){
+        $qual=$request;
+        $coach=coach::find($request->id);
+        $coach->qualifications()->create([
+            'title'=>$qual->title,
+        ]);
+
+        return response($qual,200);
+    }
+
     public function create_cont(Request $request)
     {
         $validator = Validator::make($request->all(), [
