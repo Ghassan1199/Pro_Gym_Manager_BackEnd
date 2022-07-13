@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //the route to create the admin with the gym
 Route::post('register_admin',[AdminCon::class,'store']);
 Route::post('admin_login',[LoginController::class,'adminLogin']);
+Route::post('coach_login',[LoginController::class,'coachLogin']);
+Route::post('user_login',[LoginController::class,'userLogin']);
 Route::post('create_user',[UsersController::class,'store']);
 Route::post('create_coach',[CoachController::class,'store']);
 Route::post('create_sub_user',[UsersController::class,'create_sup']);

@@ -4,10 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class coach extends Model
+
+class coach extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -17,10 +22,11 @@ class coach extends Model
         'phone_number',
         'img_url'
     ];
-    protected $hidden=[
+    protected $hidden = [
         'password'
     ];
 
+    protected $primaryKey = "id";
 
     public function gym()
     {
@@ -39,8 +45,11 @@ class coach extends Model
 
     public function qualifications()
     {
-        return $this->belongsToMany(qualifications::class, 'coach_quals',
-            'coach_id', 'qual_id');
+        return $this->belongsToMany(
+            qualifications::class,
+            'coach_quals',
+            'coach_id',
+            'qual_id'
+        );
     }
-
 }

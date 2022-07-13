@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\gym;
 use App\Models\qualifications;
 use App\Models\contract;
+use Illuminate\Support\Facades\Hash;
 
 class CoachController extends Controller
 {
@@ -43,7 +44,7 @@ class CoachController extends Controller
         }
         $coach->first_name = $request->first_name;
         $coach->last_name = $request->last_name;
-        $coach->password = $request->password;
+        $coach->password = Hash::make($request->password);
         $coach->email = $request->email;
         $coach->birthday = $request->birthday;
         $coach->gym_id = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');

@@ -7,6 +7,7 @@ use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -51,7 +52,7 @@ class UsersController extends Controller
         
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
-        $user->password = $request->password;
+        $user->password = Hash::make($request->password);
         $user->email = $request->email;
         $user->height = $request->height;
         $user->weight = $request->weight;
