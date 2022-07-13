@@ -51,7 +51,7 @@ class UsersController extends Controller
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
-        
+
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->password = Hash::make($request->password);
@@ -96,14 +96,15 @@ class UsersController extends Controller
             'fully_paid' => $request->fully_paid,
             'coach_id' => $request->coach_id
         ];
-        
+
 
 
         $user->subscription()->create($sub);
         return response($sub);
     }
 
-    public function editTrainingDays(Request $request){
+    public function editTrainingDays(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
@@ -113,23 +114,38 @@ class UsersController extends Controller
             $msg = [$validator->errors()->all()];
             return response(['msg' => $msg], 400);
         }
-        $sub=subscription::where('user_id' ,'=',$request->user_id)->get()->last();
+        $sub = subscription::where('user_id', '=', $request->user_id)->get()->last();
+        $day = day::where('sub_id', '=', $sub->id)->get()->first();
+        if (is_null($day)) {
 
-        $days=[
-            'sat'=>$request->sat,
-            'sun'=>$request->sun,
-            'mon'=>$request->mon,
-            'tue'=>$request->tue,
-            'wed'=>$request->wed,
-            'thu'=>$request->thu,
-            'fri'=>$request->fri
-        ];
-        
-        $sub->days()->create($days);
+            $days = [
+                'sat' => $request->sat,
+                'sun' => $request->sun,
+                'mon' => $request->mon,
+                'tue' => $request->tue,
+                'wed' => $request->wed,
+                'thu' => $request->thu,
+                'fri' => $request->fri
+            ];
 
-        return response($days,200);
+            $sub->days()->create($days);
+            return response($days, 200);
+        } else {
 
+            $day['sat'] = $request->sat;
+            $day['fri'] = $request->fri;
+            $day['sun'] = $request->sun;
+            $day['thu'] = $request->thu;
+            $day['mon'] = $request->mon;
+            $day['tue'] = $request->tue;
+            $day['wed'] = $request->wed;
+
+            $day->save();
+            $res['msg'] = "you`r days have been edited";
+            return response([$res, $day], 200);
+        }
     }
+
 
     /**
      * Display the specified resource.
