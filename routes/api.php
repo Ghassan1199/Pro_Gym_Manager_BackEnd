@@ -39,3 +39,4 @@ Route::post('add_days',[UsersController::class,'editTrainingDays']);
 Route::get('show_user/{id}',[UsersController::class,'show']);
 Route::get('show_coach/{id}',[CoachController::class,'show']);
 Route::get('show_gym/{id}',[gymController::class,'show']);
+Route::post('add_exe',[UsersController::class,'addexe']);

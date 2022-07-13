@@ -10,7 +10,7 @@ class subscription extends Model
 {
     use HasFactory;
 
-
+    public $timestamps = false;
     protected $fillable = [
         'starts_at',
         'ends_at',
@@ -36,10 +36,13 @@ class subscription extends Model
         return $this->hasOne(day::class, 'sub_id');
     }
 
-    public function exercies()
+    public function exercies() 
     {
-        return $this->belongsToMany(subscription::class, 'sub_exe',
-            'sub_id', 'exercies_id');
+        return $this->belongsToMany(
+            exercies::class, 
+            'sub_exes',
+            'sub_id', 
+            'exe_id');
     }
 
 }

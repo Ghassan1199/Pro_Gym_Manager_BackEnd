@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\subscription;
 use App\Models\day;
+use App\Models\exercies;
 
 class UsersController extends Controller
 {
@@ -144,6 +145,32 @@ class UsersController extends Controller
             $res['msg'] = "you`r days have been edited";
             return response([$res, $day], 200);
         }
+    }
+
+    public function addexe(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response(['msg' => $msg], 400);
+        }
+
+        $sub = subscription::where('user_id', '=', $request->user_id)
+            ->get()->last();
+        $exe=[
+        'title'=>$request->title,
+        'desc'=>$request->desc
+        ];
+        $sub->exercies()->create($exe);
+        $res['msg']="the exercies have been added succesfully";
+        $res['exe']=$exe;
+        return response($res,200);
+
+
+
     }
 
 
