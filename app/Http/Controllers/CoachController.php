@@ -97,9 +97,10 @@ class CoachController extends Controller
      * @param  \App\Models\coach  $coach
      * @return \Illuminate\Http\Response
      */
-    public function show(coach $coach)
+    public function show($id)
     {
-        //
+        $coach=coach::find($id);
+        return response($coach);
     }
 
     /**

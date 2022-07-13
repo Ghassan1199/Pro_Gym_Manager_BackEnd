@@ -8,6 +8,8 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use App\Models\subscription;
+use App\Models\day;
 
 class UsersController extends Controller
 {
@@ -94,9 +96,39 @@ class UsersController extends Controller
             'fully_paid' => $request->fully_paid,
             'coach_id' => $request->coach_id
         ];
+        
+
 
         $user->subscription()->create($sub);
         return response($sub);
+    }
+
+    public function editTrainingDays(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response(['msg' => $msg], 400);
+        }
+        $sub=subscription::where('user_id' ,'=',$request->user_id)->get()->last();
+
+        $days=[
+            'sat'=>$request->sat,
+            'sun'=>$request->sun,
+            'mon'=>$request->mon,
+            'tue'=>$request->tue,
+            'wed'=>$request->wed,
+            'thu'=>$request->thu,
+            'fri'=>$request->fri
+        ];
+        
+        $sub->days()->create($days);
+
+        return response($days,200);
+
     }
 
     /**

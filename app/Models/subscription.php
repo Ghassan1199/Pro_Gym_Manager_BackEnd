@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class subscription extends Model
 {
@@ -30,7 +31,7 @@ class subscription extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
-    public function days()
+    public function days(): HasOne
     {
         return $this->hasOne(day::class, 'sub_id');
     }
