@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
+use App\Models\coach;
 use App\Models\gym;
-use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Validator;
+use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class AdminCon extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,23 +18,13 @@ class AdminController extends Controller
      */
     public function index()
     {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
         //
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, admin $admin, gym $gym)
@@ -49,7 +39,7 @@ class AdminController extends Controller
         ]);
         if ($validator->fails()) {
 
-            return response($validator->errors()->all(), 400);
+            return response()->json($validator->errors()->all(), 400);
         } else {
 
             $admin->name = $request['name'];
@@ -65,52 +55,29 @@ class AdminController extends Controller
             ]);
         }
         $res = ['admin' => $admin, 'gym' => $admin->gym()->get()->first()];
-        return response($res, 200);
+        return response()->json($res, 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  \App\Models\admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         $res = admin::find($id);
-        return response([$res], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json($res, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\admin  $admin
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function update(Request $request, admin $admin)
     {
         //
     }

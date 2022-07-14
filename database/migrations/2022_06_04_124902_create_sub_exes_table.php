@@ -17,7 +17,6 @@ class CreateSubExesTable extends Migration
             $table->id();
             $table->foreignId('sub_id')
                 ->references('id')->on('subscriptions');
-            $table->timestamps();
         });
     }
 

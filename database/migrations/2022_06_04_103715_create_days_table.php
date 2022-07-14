@@ -15,13 +15,13 @@ class CreateDaysTable extends Migration
     {
         Schema::create('days', function (Blueprint $table) {
             $table->id();
-            $table->boolean('sat');
-            $table->boolean('sun');
-            $table->boolean('mon');
-            $table->boolean('tue');
-            $table->boolean('wed');
-            $table->boolean('thu');
-            $table->boolean('fri');
+            $table->boolean('sat')->default(0);
+            $table->boolean('sun')->default(0);
+            $table->boolean('mon')->default(0);
+            $table->boolean('tue')->default(0);
+            $table->boolean('wed')->default(0);
+            $table->boolean('thu')->default(0);
+            $table->boolean('fri')->default(0);
         });
     }
 

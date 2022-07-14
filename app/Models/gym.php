@@ -10,7 +10,8 @@ class gym extends Model
 
     protected $fillable = [
         'title',
-        'address'
+        'address',
+        'logo_url'
     ];
     use HasFactory;
 

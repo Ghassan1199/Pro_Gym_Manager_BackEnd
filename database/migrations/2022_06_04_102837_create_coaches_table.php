@@ -15,11 +15,13 @@ class CreateCoachesTable extends Migration
     {
         Schema::create('coaches', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();;
             $table->string('password');
             $table->string('phone_number')->nullable();
             $table->date('birthday');
+            $table->string('img_url')->nullable();
             $table->foreignId('gym_id')->references('id')
                 ->on('gyms');
             $table->timestamps();

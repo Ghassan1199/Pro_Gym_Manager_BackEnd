@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -26,8 +27,11 @@ class User extends Authenticatable
         'height',
         'weight',
         'phone_number',
+        'img_url'
     ];
 
+    protected $primaryKey = "id";
+    
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -36,10 +40,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
+    public function subscription() : HasOne
+    {
+        return $this->hasOne(subscription::class, 'user_id');
+    }
 
 
-
-    public function gym(){
+    public function gym()
+    {
         return $this->belongsTo(gym::class,'gym_id');
     }
 }

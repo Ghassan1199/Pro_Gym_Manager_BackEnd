@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGymsTable extends Migration
+class AddCoachIdToContracts extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateGymsTable extends Migration
      */
     public function up()
     {
-        Schema::create('gyms', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->string('address');
-            $table->string('logo_url')->nullable();
-            $table->timestamps();
+        Schema::table('contracts', function (Blueprint $table) {
+            $table->foreignId('coach_id')
+            ->references('id')->on('coaches');
         });
     }
 
@@ -29,6 +26,8 @@ class CreateGymsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gyms');
+        Schema::table('contracts', function (Blueprint $table) {
+            //
+        });
     }
 }
