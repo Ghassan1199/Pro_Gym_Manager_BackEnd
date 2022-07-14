@@ -15,12 +15,13 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name'=>$this->faker->name(),
+            'first_name'=>$this->faker->firstName(),
+            'last_name'=>$this->faker->lastName(),
             'email'=>$this->faker->unique()->safeEmail(),
             'password'=>'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'birthday'=>$this->faker->date(),
-            'height'=>$this->faker->random_int(150,200),
-            'weight'=>$this->faker->random_int(50,120),
+            'height'=>$this->faker->numberBetween(150,200),
+            'weight'=>$this->faker->numberBetween(50,150),
             'phone_number'=>$this->faker->phoneNumber(),
         ];
     }

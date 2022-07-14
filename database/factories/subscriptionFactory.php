@@ -3,7 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use App\Models\coach;
+use App\Models\User;
 class subscriptionFactory extends Factory
 {
     /**
@@ -20,6 +21,7 @@ class subscriptionFactory extends Factory
             'price'=>$this->faker->randomNumber(6),
             'paid_amount'=>$this->faker->randomNumber(5),
             'fully_paid'=>$this->faker->boolean(),
+
         ];
     }
 }
