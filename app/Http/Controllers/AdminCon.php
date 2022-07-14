@@ -39,7 +39,7 @@ class AdminCon extends Controller
         ]);
         if ($validator->fails()) {
 
-            return response($validator->errors()->all(), 400);
+            return response()->json($validator->errors()->all(), 400);
         } else {
 
             $admin->name = $request['name'];
@@ -55,7 +55,7 @@ class AdminCon extends Controller
             ]);
         }
         $res = ['admin' => $admin, 'gym' => $admin->gym()->get()->first()];
-        return response($res, 200);
+        return response()->json($res, 200);
     }
 
     /**
@@ -67,7 +67,7 @@ class AdminCon extends Controller
     public function show($id)
     {
         $res = admin::find($id);
-        return response([$res], 200);   
+        return response()->json($res, 200);
     }
 
     /**
@@ -81,7 +81,4 @@ class AdminCon extends Controller
     {
         //
     }
-
-
-
 }

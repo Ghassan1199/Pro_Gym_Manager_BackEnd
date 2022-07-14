@@ -147,7 +147,8 @@ class UsersController extends Controller
         }
     }
 
-    public function addexe(Request $request){
+    public function addexe(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
@@ -160,17 +161,14 @@ class UsersController extends Controller
 
         $sub = subscription::where('user_id', '=', $request->user_id)
             ->get()->last();
-        $exe=[
-        'title'=>$request->title,
-        'desc'=>$request->desc
+        $exe = [
+            'title' => $request->title,
+            'desc' => $request->desc
         ];
         $sub->exercies()->create($exe);
-        $res['msg']="the exercies have been added succesfully";
-        $res['exe']=$exe;
-        return response($res,200);
-
-
-
+        $res['msg'] = "the exercies have been added succesfully";
+        $res['exe'] = $exe;
+        return response($res, 200);
     }
 
 

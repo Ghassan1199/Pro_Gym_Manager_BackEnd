@@ -40,7 +40,7 @@ class CoachController extends Controller
 
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
-            return response(['msg' => $msg], 400);
+            return response()->json(['msg' => $msg], 400);
         }
         $coach->first_name = $request->first_name;
         $coach->last_name = $request->last_name;
@@ -50,18 +50,19 @@ class CoachController extends Controller
         $coach->gym_id = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
         $coach->save();
 
-        return response($coach, 200);
+        return response()->json($coach, 200);
     }
 
-    public function create_qual(Request $request){
-        $qual=$request;
-        
-        $coach=coach::find($request->id);
+    public function create_qual(Request $request)
+    {
+        $qual = $request;
+
+        $coach = coach::find($request->id);
         $coach->qualifications()->create([
-            'title'=>$qual->title,
+            'title' => $qual->title,
         ]);
 
-        return response($qual,200);
+        return response()->json($qual, 200);
     }
 
     public function create_cont(Request $request)
@@ -75,7 +76,7 @@ class CoachController extends Controller
 
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
-            return response(['msg' => $msg], 400);
+            return response()->json(['msg' => $msg], 400);
         }
 
         $coach = coach::find($request->coach_id);
@@ -89,7 +90,7 @@ class CoachController extends Controller
 
         $coach->contract()->create($cont);
 
-        return response($cont, 200);
+        return response()->json($cont, 200);
     }
 
     /**
@@ -100,8 +101,8 @@ class CoachController extends Controller
      */
     public function show($id)
     {
-        $coach=coach::find($id);
-        return response($coach);
+        $coach = coach::find($id);
+        return response()->json($coach,200);
     }
 
     /**

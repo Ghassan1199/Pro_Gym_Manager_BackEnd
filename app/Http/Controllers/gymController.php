@@ -14,8 +14,8 @@ class gymController extends Controller
      */
     public function index()
     {
-        $gyms=gym::all();
-        return response($gyms,200);
+        $gyms = gym::all();
+        return response($gyms, 200);
     }
 
     /**
@@ -35,10 +35,10 @@ class gymController extends Controller
      * @param  \App\Models\gym  $gym
      * @return \Illuminate\Http\Response
      */
-    public function show(gym $gym,$id)
+    public function show(gym $gym, $id)
     {
-        $gym=gym::find($id);
-        return response($gym,200);
+        $gym = gym::find($id);
+        return response($gym, 200);
     }
 
     /**

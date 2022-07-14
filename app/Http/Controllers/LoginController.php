@@ -27,10 +27,9 @@ class LoginController extends Controller
             return response()->json(["message" => $validator->errors()->first()], 400);
         }
 
-        if (admin::where('email', $email)->count() <= 0){
+        if (admin::where('email', $email)->count() <= 0) {
             return response(array("message" => "Email does not exist"), 400);
-
-        } 
+        }
 
         $admin = admin::where('email', $email)->first();
 
@@ -92,12 +91,11 @@ class LoginController extends Controller
         } else {
             return response(array("message" => "Wrong Credentials."), 400);
         }
-
-
     }
 
-    public function userLogin(Request $request){
-                $email = $request->input('email');
+    public function userLogin(Request $request)
+    {
+        $email = $request->input('email');
         $password = $request->input('password');
 
         $rules = [
@@ -116,7 +114,7 @@ class LoginController extends Controller
         }
         $user = User::where('email', $email)->first();
 
-        if ($user->password==$password) {
+        if ($user->password == $password) {
 
             $user->last_login = Carbon::now();
 
@@ -133,6 +131,5 @@ class LoginController extends Controller
         } else {
             return response(array("message" => "Wrong Credentials."), 400);
         }
-
     }
 }
