@@ -41,6 +41,20 @@ class gymController extends Controller
         return response($gym, 200);
     }
 
+    public function showAllUsers($id){
+        $gym=gym::find($id);
+        $users=$gym->users()->get();
+        $res['users']=$users;
+        return response()->json($res,200);
+    }
+
+    public function showAllCoaches($id){
+        $gym=gym::find($id);
+        $coaches=$gym->coaches()->get();
+        $res['coaches']=$coaches;
+        return response()->json($res,200);
+    }
+
     /**
      * Update the specified resource in storage.
      *

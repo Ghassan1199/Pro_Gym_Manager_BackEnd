@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\gym;
 use App\Models\qualifications;
 use App\Models\contract;
+use App\Models\subscription;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class CoachController extends Controller
@@ -28,7 +30,7 @@ class CoachController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, coach $coach)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
@@ -42,6 +44,8 @@ class CoachController extends Controller
             $msg = [$validator->errors()->all()];
             return response()->json(['msg' => $msg], 400);
         }
+
+        $coach=new coach;
         $coach->first_name = $request->first_name;
         $coach->last_name = $request->last_name;
         $coach->password = Hash::make($request->password);
@@ -93,6 +97,24 @@ class CoachController extends Controller
         return response()->json($cont, 200);
     }
 
+    //we need the $id for the coach
+    public function showAllUsers($id){
+        $coach=coach::find($id);
+        $users=$coach->Users()->get();
+        $res['users']=$users;
+
+        return response()->json($res,200);
+    }
+
+    //we need the $id for the coach
+    public function showPrivateUsers($id){
+        $coach=coach::find($id);
+        $users=$coach->subscription()->where('private','=','1')->get();
+        $res['users']=$users;
+
+        return response()->json($res,200);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -117,14 +139,4 @@ class CoachController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\coach  $coach
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(coach $coach)
-    {
-        //
-    }
 }

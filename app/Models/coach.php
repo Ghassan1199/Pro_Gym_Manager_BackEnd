@@ -53,4 +53,8 @@ class coach extends Authenticatable
             'qual_id'
         );
     }
+
+    public function Users(){
+        return $this->hasManyThrough(User::class,subscription::class,'coach_id','id');
+    }
 }
