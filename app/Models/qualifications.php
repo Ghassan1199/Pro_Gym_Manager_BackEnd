@@ -12,10 +12,15 @@ class qualifications extends Model
     protected $fillable=[
         'title'
     ];
+    public $timestamps = false;
+
 
     public function coaches()
     {
-        return $this->belongsToMany(qualifications::class, 'coach_quals',
-            'qual_id', 'coach_id');
+        return $this->belongsToMany(qualifications::class,
+         'coach_quals',
+         'qual_id', 
+         'coach_id'
+        );
     }
 }

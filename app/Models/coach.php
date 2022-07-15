@@ -15,7 +15,8 @@ class coach extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'birthday',
@@ -51,5 +52,9 @@ class coach extends Authenticatable
             'coach_id',
             'qual_id'
         );
+    }
+
+    public function Users(){
+        return $this->hasManyThrough(User::class,subscription::class,'coach_id','id');
     }
 }
