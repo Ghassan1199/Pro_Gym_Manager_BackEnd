@@ -10,6 +10,7 @@ use App\Models\contract;
 use App\Models\day;
 use App\Models\exercies;
 use App\Models\gym;
+use App\Models\payment;
 use App\Models\qualifications;
 use App\Models\subscription;
 use App\Models\User;
@@ -35,6 +36,7 @@ class DatabaseSeeder extends Seeder
 
                     User::factory(5)->create(['gym_id' => $gym->id])->each(function($user) use($coach,$exe){
                         subscription::factory(1)->create(['user_id'=>$user->id,'coach_id'=>$coach->id])->each(function($subscription) use($exe){
+                            payment::factory(rand(1,4))->create(['sub_id'=>$subscription->id,'amount'=>2000]);
                             day::factory(1)->create(['sub_id'=>$subscription->id]);
                             $subscription->exercies()->attach($exe->random(5));
                         });
