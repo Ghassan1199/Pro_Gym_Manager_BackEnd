@@ -184,6 +184,7 @@ class UsersController extends Controller
 
     public function showOnlyActive($id) {
         $users=User::where('gym_id' ,'=' ,$id)->get();
+        $active=[];
         foreach($users as $user){
             if($user->subscription()->value('ends_at') >= Carbon::now()) {
                 $active[]=$user;
@@ -195,12 +196,13 @@ class UsersController extends Controller
 
     public function showOnlyUnActive($id) {
         $users=User::where('gym_id' ,'=' ,$id)->get();
+        $unactive=[];
         foreach($users as $user){
             if($user->subscription()->value('ends_at') < Carbon::now()) {
-                $active[]=$user;
+                $unactive[]=$user;
             }
         } 
-        $res['UnActive_users']=$active;
+        $res['UnActive_users']=$unactive;
         return response()->json($res,200);
     }
 
