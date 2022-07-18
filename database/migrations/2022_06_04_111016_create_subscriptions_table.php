@@ -24,7 +24,7 @@ class CreateSubscriptionsTable extends Migration
             $table->boolean('fully_paid');
             $table->integer('paid_amount');
             $table->foreignId('coach_id')
-                ->references('id')->on('coaches');
+                ->references('id')->on('coaches')->nullable();
             $table->timestamps();
         });
     }

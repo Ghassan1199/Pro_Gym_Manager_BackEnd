@@ -10,6 +10,7 @@ use App\Models\qualifications;
 use App\Models\contract;
 use App\Models\subscription;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class CoachController extends Controller
@@ -112,6 +113,30 @@ class CoachController extends Controller
         $users=$coach->subscription()->where('private','=','1')->get();
         $res['users']=$users;
 
+        return response()->json($res,200);
+    }
+
+    public function showAvailableCoaches($id){
+        $coaches=coach::where('gym_id' ,'=' ,$id)->get();
+        $available=[];
+        foreach($coaches as $coach){
+            if($coach->contract()->value('end_date') > Carbon::now()) {
+                $available[]=$coach;
+            }
+        } 
+        $res['Available_coaches']=$available;
+        return response()->json($res,200);
+    }
+
+    public function showUnAvailableCoaches($id){
+        $coaches=coach::where('gym_id' ,'=' ,$id)->get();
+        $Unavailable=[];
+        foreach($coaches as $coach){
+            if($coach->contract()->value('end_date') < Carbon::now()) {
+                $Unavailable[]=$coach;
+            }
+        } 
+        $res['UnAvailable_coaches']=$Unavailable;
         return response()->json($res,200);
     }
 

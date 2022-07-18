@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\subscription;
 use App\Models\day;
 use App\Models\exercies;
+use Carbon\Carbon;
 
 class UsersController extends Controller
 {
@@ -179,6 +180,30 @@ class UsersController extends Controller
     {
         $user = User::find($id);
         return response($user, 200);
+    }
+
+    public function showOnlyActive($id) {
+        $users=User::where('gym_id' ,'=' ,$id)->get();
+        $active=[];
+        foreach($users as $user){
+            if($user->subscription()->value('ends_at') >= Carbon::now()) {
+                $active[]=$user;
+            }
+        } 
+        $res['Active_users']=$active;
+        return response()->json($res,200);
+    }
+
+    public function showOnlyUnActive($id) {
+        $users=User::where('gym_id' ,'=' ,$id)->get();
+        $unactive=[];
+        foreach($users as $user){
+            if($user->subscription()->value('ends_at') < Carbon::now()) {
+                $unactive[]=$user;
+            }
+        } 
+        $res['UnActive_users']=$unactive;
+        return response()->json($res,200);
     }
 
 

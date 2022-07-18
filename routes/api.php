@@ -47,3 +47,7 @@ Route::get('coach/show_all_users/{id}',[CoachController::class,'showAllUsers']);
 Route::get('coach/show_private_users/{id}',[CoachController::class,'showPrivateUsers']);
 Route::get('gym/show_all_users/{id}',[gymController::class,'showAllUsers']);
 Route::get('gym/show_all_coaches/{id}',[gymController::class,'showAllCoaches']);
+Route::get('users_active/{id}',[UsersController::class,'showOnlyActive']);
+Route::get('users_unactive/{id}',[UsersController::class,'showOnlyUnactive']);
+Route::get('coach_available/{id}',[CoachController::class,'showAvailableCoaches']);
+Route::get('coach_unavailable/{id}',[CoachController::class,'showUnAvailableCoaches']);
