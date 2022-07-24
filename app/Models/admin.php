@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +10,7 @@ use Laravel\Passport\HasApiTokens;
 
 class admin extends Authenticatable
 {
-    use HasApiTokens,HasFactory,Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -20,13 +19,13 @@ class admin extends Authenticatable
         'birthday',
         'gym_id'
     ];
-    protected $hidden=[
+    protected $hidden = [
         'password'
     ];
 
     protected $primaryKey = "id";
 
-    public function gym() : HasOne
+    public function gym(): HasOne
     {
         return $this->hasOne(gym::class, 'admin_id');
     }

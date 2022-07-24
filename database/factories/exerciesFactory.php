@@ -14,8 +14,8 @@ class exerciesFactory extends Factory
     public function definition()
     {
         return [
-            'title'=>$this->faker->text(10),
-            'desc'=>$this->faker->text(50)
+            'title' => $this->faker->text(10),
+            'desc' => $this->faker->text(50)
         ];
     }
 }

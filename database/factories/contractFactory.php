@@ -14,9 +14,9 @@ class contractFactory extends Factory
     public function definition()
     {
         return [
-            'salary'=>$this->faker->randomNumber(5),
-            'start_date'=>$this->faker->dateTimeBetween('-1 year' ,'now' ,null),
-            'end_date'=>$this->faker->dateTimeBetween('now','+1 year' ,null),
+            'salary' => $this->faker->randomNumber(5),
+            'start_date' => $this->faker->dateTimeBetween('-1 year', 'now', null),
+            'end_date' => $this->faker->dateTimeBetween('now', '+1 year', null),
         ];
     }
 }

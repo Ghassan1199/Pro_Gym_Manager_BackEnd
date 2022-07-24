@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\gym;
-use App\Models\User;
-use Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use App\Models\subscription;
 use App\Models\day;
 use App\Models\exercies;
+use App\Models\gym;
+use App\Models\subscription;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
 
-    public function index(){
+    public function index()
+    {
         $users = User::all();
         return response()->json($users);
     }
@@ -25,10 +26,11 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -43,7 +45,7 @@ class UsersController extends Controller
             return response()->json(['msg' => $msg], 400);
         }
 
-        $user=new User;
+        $user = new User;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->password = Hash::make($request->password);
@@ -56,10 +58,11 @@ class UsersController extends Controller
 
         $user->save();
 
-        return response()->json($user,200);
+        return response()->json($user, 200);
     }
 
-    public function create_sup(Request $request){
+    public function create_sup(Request $request)
+    {
         $user = User::find($request->user_id);
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
@@ -89,12 +92,12 @@ class UsersController extends Controller
         ];
 
 
-
         $user->subscription()->create($sub);
-        return response()->json($sub,200);
+        return response()->json($sub, 200);
     }
 
-    public function editTrainingDays(Request $request){
+    public function editTrainingDays(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
@@ -136,7 +139,8 @@ class UsersController extends Controller
         }
     }
 
-    public function addexe(Request $request,$id){
+    public function addexe(Request $request, $id)
+    {
 
         $sub = subscription::where('user_id', '=', $id)->get()->last();
         $exe = [
@@ -149,32 +153,35 @@ class UsersController extends Controller
         return response()->json($res, 200);
     }
 
-    public function showDays($id){
+    public function showDays($id)
+    {
         $sub = subscription::where('user_id', '=', $id)->get()->last();
-        $days=$sub->days()->get();
-        return response()->json($days,200);
+        $days = $sub->days()->get();
+        return response()->json($days, 200);
     }
 
     //need the user id to show all his exercieses
-    public function showAllExes($id){
+    public function showAllExes($id)
+    {
 
-        $sub=subscription::where('user_id','=',$id)->get()->last();
-        $exe=$sub->exercies()->get();
+        $sub = subscription::where('user_id', '=', $id)->get()->last();
+        $exe = $sub->exercies()->get();
 
-        return response()->json($exe,200);
+        return response()->json($exe, 200);
     }
 
     //need the exercies id to show it`s full details
-    public function showExe($id){
-        $exe=exercies::find($id);
-        return response()->json($exe,200);
+    public function showExe($id)
+    {
+        $exe = exercies::find($id);
+        return response()->json($exe, 200);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -182,37 +189,39 @@ class UsersController extends Controller
         return response($user, 200);
     }
 
-    public function showOnlyActive($id) {
-        $users=User::where('gym_id' ,'=' ,$id)->get();
-        $active=[];
-        foreach($users as $user){
-            if($user->subscription()->value('ends_at') >= Carbon::now()) {
-                $active[]=$user;
+    public function showOnlyActive($id)
+    {
+        $users = User::where('gym_id', '=', $id)->get();
+        $active = [];
+        foreach ($users as $user) {
+            if ($user->subscription()->value('ends_at') >= Carbon::now()) {
+                $active[] = $user;
             }
-        } 
-        $res['Active_users']=$active;
-        return response()->json($res,200);
+        }
+        $res['Active_users'] = $active;
+        return response()->json($res, 200);
     }
 
-    public function showOnlyUnActive($id) {
-        $users=User::where('gym_id' ,'=' ,$id)->get();
-        $unactive=[];
-        foreach($users as $user){
-            if($user->subscription()->value('ends_at') < Carbon::now()) {
-                $unactive[]=$user;
+    public function showOnlyUnActive($id)
+    {
+        $users = User::where('gym_id', '=', $id)->get();
+        $unactive = [];
+        foreach ($users as $user) {
+            if ($user->subscription()->value('ends_at') < Carbon::now()) {
+                $unactive[] = $user;
             }
-        } 
-        $res['UnActive_users']=$unactive;
-        return response()->json($res,200);
+        }
+        $res['UnActive_users'] = $unactive;
+        return response()->json($res, 200);
     }
 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {

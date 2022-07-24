@@ -3,22 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\coach;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\gym;
-use App\Models\qualifications;
-use App\Models\contract;
-use App\Models\subscription;
-use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class CoachController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -28,8 +25,8 @@ class CoachController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -46,7 +43,7 @@ class CoachController extends Controller
             return response()->json(['msg' => $msg], 400);
         }
 
-        $coach=new coach;
+        $coach = new coach;
         $coach->first_name = $request->first_name;
         $coach->last_name = $request->last_name;
         $coach->password = Hash::make($request->password);
@@ -99,65 +96,69 @@ class CoachController extends Controller
     }
 
     //we need the $id for the coach
-    public function showAllUsers($id){
-        $coach=coach::find($id);
-        $users=$coach->Users()->get();
-        $res['users']=$users;
+    public function showAllUsers($id)
+    {
+        $coach = coach::find($id);
+        $users = $coach->Users()->get();
+        $res['users'] = $users;
 
-        return response()->json($res,200);
+        return response()->json($res, 200);
     }
 
     //we need the $id for the coach
-    public function showPrivateUsers($id){
-        $coach=coach::find($id);
-        $users=$coach->subscription()->where('private','=','1')->get();
-        $res['users']=$users;
+    public function showPrivateUsers($id)
+    {
+        $coach = coach::find($id);
+        $users = $coach->subscription()->where('private', '=', '1')->get();
+        $res['users'] = $users;
 
-        return response()->json($res,200);
+        return response()->json($res, 200);
     }
 
-    public function showAvailableCoaches($id){
-        $coaches=coach::where('gym_id' ,'=' ,$id)->get();
-        $available=[];
-        foreach($coaches as $coach){
-            if($coach->contract()->value('end_date') > Carbon::now()) {
-                $available[]=$coach;
+    public function showAvailableCoaches($id)
+    {
+        $coaches = coach::where('gym_id', '=', $id)->get();
+        $available = [];
+        foreach ($coaches as $coach) {
+            if ($coach->contract()->value('end_date') > Carbon::now()) {
+                $available[] = $coach;
             }
-        } 
-        $res['Available_coaches']=$available;
-        return response()->json($res,200);
+        }
+        $res['Available_coaches'] = $available;
+        return response()->json($res, 200);
     }
 
-    public function showUnAvailableCoaches($id){
-        $coaches=coach::where('gym_id' ,'=' ,$id)->get();
-        $Unavailable=[];
-        foreach($coaches as $coach){
-            if($coach->contract()->value('end_date') < Carbon::now()) {
-                $Unavailable[]=$coach;
+    public function showUnAvailableCoaches($id)
+    {
+        $coaches = coach::where('gym_id', '=', $id)->get();
+        $Unavailable = [];
+        foreach ($coaches as $coach) {
+            if ($coach->contract()->value('end_date') < Carbon::now()) {
+                $Unavailable[] = $coach;
             }
-        } 
-        $res['UnAvailable_coaches']=$Unavailable;
-        return response()->json($res,200);
+        }
+        $res['UnAvailable_coaches'] = $Unavailable;
+        return response()->json($res, 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\coach  $coach
-     * @return \Illuminate\Http\Response
+     * @param coach $coach
+     * @return Response
      */
     public function show($id)
     {
         $coach = coach::find($id);
-        return response()->json($coach,200);
+        return response()->json($coach, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\coach  $coach
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param coach $coach
+     * @return Response
      */
     public function update(Request $request, coach $coach)
     {

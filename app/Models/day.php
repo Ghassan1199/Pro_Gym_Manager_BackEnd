@@ -10,6 +10,7 @@ class day extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
     protected $fillable = [
         'sat',
         'sun',
@@ -19,10 +20,9 @@ class day extends Model
         'thu',
         'fri'
     ];
-    public $timestamps = false;
 
-    public function subscription() : BelongsTo
+    public function subscription(): BelongsTo
     {
-        return $this->belongsTo(subscription::class,'day_id');
+        return $this->belongsTo(subscription::class, 'day_id');
     }
 }

@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
-use App\Models\coach;
 use App\Models\gym;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Psy\Util\Json;
 
 class AdminCon extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -24,8 +25,8 @@ class AdminCon extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request, admin $admin, gym $gym)
     {
@@ -61,8 +62,8 @@ class AdminCon extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param admin $admin
+     * @return Response
      */
     public function show($id)
     {
@@ -73,9 +74,9 @@ class AdminCon extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param admin $admin
+     * @return Response
      */
     public function update(Request $request, admin $admin)
     {

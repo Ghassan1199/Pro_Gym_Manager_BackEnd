@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
+use App\Models\coach;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use App\Models\coach;
-use App\Models\User;
 
 class LoginController extends Controller
 {

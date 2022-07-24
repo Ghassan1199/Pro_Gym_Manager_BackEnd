@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Passport\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 
 class coach extends Authenticatable
@@ -54,7 +52,8 @@ class coach extends Authenticatable
         );
     }
 
-    public function Users(){
-        return $this->hasManyThrough(User::class,subscription::class,'coach_id','id');
+    public function Users()
+    {
+        return $this->hasManyThrough(User::class, subscription::class, 'coach_id', 'id');
     }
 }

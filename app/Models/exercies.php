@@ -13,9 +13,10 @@ class exercies extends Model
         'desc'
     ];
     use HasFactory;
+
     public function subscriptions()
     {
-        
+
         return $this->belongsToMany(subscription::class, 'sub_exe',
             'exercies_id', 'sub_id');
     }
