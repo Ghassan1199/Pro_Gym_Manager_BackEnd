@@ -16,30 +16,13 @@ class gymController extends Controller
     public function index()
     {
         $gyms = gym::all();
-        return response($gyms, 200);
+        return response()->json($gyms, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param gym $gym
-     * @return Response
-     */
     public function show(gym $gym, $id)
     {
         $gym = gym::find($id);
-        return response($gym, 200);
+        return response()->json($gym, 200);
     }
 
     public function showAllUsers($id)

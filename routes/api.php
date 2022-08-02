@@ -24,29 +24,46 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-//the route to create the admin with the gym
-Route::post('register_admin', [AdminCon::class, 'store']);
-Route::post('admin_login', [LoginController::class, 'adminLogin']);
-Route::post('coach_login', [LoginController::class, 'coachLogin']);
-Route::post('user_login', [LoginController::class, 'userLogin']);
-Route::post('create_user', [UsersController::class, 'store']);
-Route::post('create_coach', [CoachController::class, 'store']);
-Route::post('create_sub_user', [UsersController::class, 'create_sup']);
-Route::post('create_contract', [CoachController::class, 'create_cont']);
-Route::post('create_qual', [CoachController::class, 'create_qual']);
-Route::post('add_days', [UsersController::class, 'editTrainingDays']);
-Route::get('show_user/{id}', [UsersController::class, 'show']);
-Route::get('show_coach/{id}', [CoachController::class, 'show']);
+Route::prefix('admin')->controller(AdminCon::class)->group(function () {
+
+    Route::post('register_admin', 'store');
+    Route::post('create_user', 'addUser');
+    Route::post('create_coach', 'addCoach');
+    Route::post('create_contract', 'create_cont');
+    Route::post('create_sub', 'create_sub');
+    Route::get('users_inactive/{id}', 'showOnlyInActive');
+    Route::get('users_active/{id}', 'showOnlyActive');
+});
+
+Route::prefix('login')->controller(LoginController::class)->group(function () {
+
+    Route::post('admin', 'adminLogin');
+    Route::post('coach_login', 'coachLogin');
+    Route::post('user_login', 'userLogin');
+});
+
+Route::prefix('user')->controller(UsersController::class)->group(function () {
+
+    Route::get('show_data', 'show');
+    Route::post('edit_days', 'editTrainingDays'); //this need to be moved to the coach
+    Route::post('add_exe/{id}', 'addexe');      //this need to be moved to the coach
+    Route::get('show_all_exe/', 'showAllExes');
+    Route::get('show_exe/{id}', 'showExe');
+    Route::get('show_days', 'showDays');
+
+});
+
+Route::prefix('coach')->controller(CoachController::class)->group(function () {
+
+    Route::get('coach/show_all_users/{id}', 'showAllUsers');
+    Route::get('coach/show_private_users/{id}', 'showPrivateUsers');
+    Route::get('coach_available/{id}', 'showAvailableCoaches');
+    Route::post('create_qual', 'create_qual');
+    Route::get('show_coach/{id}', 'show');
+    Route::get('coach_unavailable/{id}', 'showUnAvailableCoaches');
+});
+
 Route::get('show_gym/{id}', [gymController::class, 'show']);
-Route::post('add_exe/{id}', [UsersController::class, 'addexe']);
-Route::get('show_all_exe/{id}', [UsersController::class, 'showAllExes']);
-Route::get('show_exe/{id}', [UsersController::class, 'showExe']);
-Route::get('show_days/{id}', [UsersController::class, 'showDays']);
-Route::get('coach/show_all_users/{id}', [CoachController::class, 'showAllUsers']);
-Route::get('coach/show_private_users/{id}', [CoachController::class, 'showPrivateUsers']);
 Route::get('gym/show_all_users/{id}', [gymController::class, 'showAllUsers']);
 Route::get('gym/show_all_coaches/{id}', [gymController::class, 'showAllCoaches']);
-Route::get('users_active/{id}', [UsersController::class, 'showOnlyActive']);
-Route::get('users_unactive/{id}', [UsersController::class, 'showOnlyUnactive']);
-Route::get('coach_available/{id}', [CoachController::class, 'showAvailableCoaches']);
-Route::get('coach_unavailable/{id}', [CoachController::class, 'showUnAvailableCoaches']);
+

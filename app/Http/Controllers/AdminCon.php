@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
+use App\Models\coach;
 use App\Models\gym;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -12,22 +15,12 @@ use Psy\Util\Json;
 
 class AdminCon extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
     public function store(Request $request, admin $admin, gym $gym)
     {
         $validator = Validator::make($request->all(), [
@@ -43,41 +36,174 @@ class AdminCon extends Controller
             return response()->json($validator->errors()->all(), 400);
         } else {
 
-            $admin->name = $request['name'];
-            $admin->password = Hash::make($request->password);
-            $admin->email = $request['email'];
-            $admin->birthday = $request['birthday'];
+            $admin['name'] = $request['name'];
+            $admin['password'] = Hash::make($request['password']);
+            $admin['email'] = $request['email'];
+            $admin['birthday'] = $request['birthday'];
 
             $admin->save();
 
             $admin->gym()->create([
-                'title' => $request->gym_name,
-                'address' => $request->gym_address
+                'title' => $request['gym_name'],
+                'address' => $request['gym_address']
             ]);
         }
         $res = ['admin' => $admin, 'gym' => $admin->gym()->get()->first()];
         return response()->json($res, 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param admin $admin
-     * @return Response
-     */
+
     public function show($id)
     {
         $res = admin::find($id);
         return response()->json($res, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param admin $admin
-     * @return Response
-     */
+    public function addUser(Request $request){
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'password' => 'required',
+            'email' => 'required|unique:users|email',
+            'height' => 'required',
+            'weight' => 'required',
+            'birthday' => 'required|date',
+        ]);
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response()->json(['msg' => $msg], 400);
+        }
+
+        $user = new User;
+        $user['first_name'] = $request['first_name'];
+        $user['last_name'] = $request['last_name'];
+        $user['password'] = Hash::make($request['password']);
+        $user['email'] = $request['email'];
+        $user['height'] = $request['height'];
+        $user['weight'] = $request['weight'];
+        $user['birthday'] = $request['birthday'];
+        $user['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
+
+        $user->save();
+
+        return response()->json($user, 200);
+    }
+
+    public function addCoach(Request $request){
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'password' => 'required',
+            'email' => 'required|unique:coach|email',
+            'birthday' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response()->json(['msg' => $msg], 400);
+        }
+
+        $coach = new coach;
+        $coach['first_name']= $request['first_name'];
+        $coach['last_name'] = $request['last_name'];
+        $coach['password'] = Hash::make($request['password']);
+        $coach['email'] = $request['email'];
+        $coach['birthday'] = $request['birthday'];
+        $coach['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
+        $coach->save();
+
+        return response()->json($coach, 200);
+    }
+
+    public function create_cont(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'salary' => 'required',
+            'coach_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response()->json(['msg' => $msg], 400);
+        }
+
+        $coach = coach::find($request['coach_id']);
+
+        $cont = [
+            'coach_id' => $request['coach_id'],
+            'salary' => $request['salary'],
+            'start_date' => $request['start_date'],
+            'end_date' => $request['end_date']
+        ];
+
+        $coach->contract()->create($cont);
+
+        return response()->json($cont, 200);
+    }
+
+    public function create_sub(Request $request)
+    {
+        $user = User::find($request['user_id']);
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'coach_id' => 'required',
+            'starts_at' => 'required',
+            'ends_at' => 'required',
+            'private' => 'required',
+            'paid_amount' => 'required',
+            'fully_paid' => 'required',
+            'price' => 'required'
+
+        ]);
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response()->json(['msg' => $msg], 400);
+        }
+
+        $sub = [
+            'user_id' => $user['id'],
+            'starts_at' => $request['starts_at'],
+            'ends_at' => $request['ends_at'],
+            'private' => $request['private'],
+            'price' => $request['price'],
+            'paid_amount' => $request['paid_amount'],
+            'fully_paid' => $request['fully_paid'],
+            'coach_id' => $request['coach_id']
+        ];
+
+
+        $user->subscription()->create($sub);
+        return response()->json($sub, 200);
+    }
+
+    public function showOnlyActive()
+    {
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->value('admin_id')->get();
+        $active = [];
+        foreach ($users as $user) {
+            if ($user->subscription()->value('ends_at') >= Carbon::now()) {
+                $active[] = $user;
+            }
+        }
+        $res['Active_users'] = $active;
+        return response()->json($res, 200);
+    }
+
+    public function showOnlyInActive()
+    {
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->value('admin_id')->get();
+        $inactive = [];
+        foreach ($users as $user) {
+            if ($user->subscription()->value('ends_at') < Carbon::now()) {
+                $inactive[] = $user;
+            }
+        }
+        $res['UnActive_users'] = $inactive;
+        return response()->json($res, 200);
+    }
+
     public function update(Request $request, admin $admin)
     {
         //
