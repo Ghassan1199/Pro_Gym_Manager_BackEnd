@@ -33,6 +33,9 @@ Route::prefix('admin')->controller(AdminCon::class)->group(function () {
     Route::post('create_sub', 'create_sub');
     Route::get('users_inactive/{id}', 'showOnlyInActive');
     Route::get('users_active/{id}', 'showOnlyActive');
+    Route::get('show_sub/{id}', 'showSub');
+    Route::get('show_cont/{id}','showCont');
+    Route::post('add_payment','addPayment');
 });
 
 Route::prefix('login')->controller(LoginController::class)->group(function () {
@@ -45,22 +48,24 @@ Route::prefix('login')->controller(LoginController::class)->group(function () {
 Route::prefix('user')->controller(UsersController::class)->group(function () {
 
     Route::get('show_data', 'show');
-    Route::post('edit_days', 'editTrainingDays'); //this need to be moved to the coach
-    Route::post('add_exe/{id}', 'addexe');      //this need to be moved to the coach
+    Route::post('edit_days', 'editTrainingDays');
+
     Route::get('show_all_exe/', 'showAllExes');
     Route::get('show_exe/{id}', 'showExe');
     Route::get('show_days', 'showDays');
+    Route::get('show_sub', 'showSub');
 
 });
 
 Route::prefix('coach')->controller(CoachController::class)->group(function () {
-
-    Route::get('coach/show_all_users/{id}', 'showAllUsers');
-    Route::get('coach/show_private_users/{id}', 'showPrivateUsers');
-    Route::get('coach_available/{id}', 'showAvailableCoaches');
+    Route::get('show_cont','showCont');
+    Route::get('show_all_users/{id}', 'showAllUsers');
+    Route::get('show_private_users/{id}', 'showPrivateUsers');
+    Route::get('coach_available/{id}', 'showAvailableCoaches'); //this need to be moved to the admin
     Route::post('create_qual', 'create_qual');
-    Route::get('show_coach/{id}', 'show');
-    Route::get('coach_unavailable/{id}', 'showUnAvailableCoaches');
+    Route::post('add_exe/{id}', 'addexe');
+    Route::get('show_coach/{id}', 'show');              // this need to be duplicated and move one to the admin
+    Route::get('coach_unavailable/{id}', 'showUnAvailableCoaches');  //this need to be moved to the admin
 });
 
 Route::get('show_gym/{id}', [gymController::class, 'show']);

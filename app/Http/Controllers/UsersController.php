@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\day;
 use App\Models\exercies;
-use App\Models\gym;
 use App\Models\subscription;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
@@ -88,19 +84,7 @@ class UsersController extends Controller
         return response()->json($exe, 200);
     }
 
-    public function addexe(Request $request, $id)
-    {
-
-        $sub = subscription::where('user_id', '=', $id)->get()->last();
-        $exe = [
-            'title' => $request['title'],
-            'desc' => $request['desc']
-        ];
-        $sub->exercies()->create($exe);
-        $res['msg'] = "the exercies have been added succesfully";
-        $res['exe'] = $exe;
-        return response()->json($res, 200);
-    }
+//
 
     public function show()
     {
@@ -120,6 +104,13 @@ class UsersController extends Controller
 
         $user->save();
         return response($user, 200);
+    }
+
+    public function showSub()
+    {
+        $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
+        return response()->json($sub,200);
+
     }
 
     //    public function showOnlyActive($id)
@@ -212,6 +203,20 @@ class UsersController extends Controller
 //
 //        $user->subscription()->create($sub);
 //        return response()->json($sub, 200);
+//    }
+
+//    public function addexe(Request $request,$id)
+//    {
+//
+//        $sub = subscription::where('user_id', '=',$id )->get()->last();
+//        $exe = [
+//            'title' => $request['title'],
+//            'desc' => $request['desc']
+//        ];
+//        $sub->exercies()->create($exe);
+//        $res['msg'] = "the exercies have been added succesfully";
+//        $res['exe'] = $exe;
+//        return response()->json($res, 200);
 //    }
 
 

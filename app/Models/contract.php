@@ -12,7 +12,8 @@ class contract extends Model
     protected $fillable = [
         'salary',
         'start_date',
-        'end_date'
+        'end_date',
+        'coach_id'
     ];
 
     public function coach()

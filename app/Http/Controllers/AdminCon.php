@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\admin;
 use App\Models\coach;
+use App\Models\contract;
 use App\Models\gym;
+use App\Models\subscription;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -202,6 +204,27 @@ class AdminCon extends Controller
         }
         $res['UnActive_users'] = $inactive;
         return response()->json($res, 200);
+    }
+
+    public function showSub($id)
+    {
+        $sub = subscription::where('user_id', '=',$id)->get()->last();
+        return response()->json($sub,200);
+    }
+
+    public function showCont($id){
+        $cont = contract::Where('coach_id','=',$id)->get()->last();
+        return response()->json($cont,200);
+    }
+
+    public function addPayment(Request $request){
+        $amount=$request['amount'];
+        $sub = subscription::where('id','=',$request['sub_id'])->get()->last();
+        $sub->payment()->create([
+            'amount'=>$request['amount']
+        ]);
+        $res['msg']="$amount have been paid";
+        return response()->json($res,200);
     }
 
     public function update(Request $request, admin $admin)

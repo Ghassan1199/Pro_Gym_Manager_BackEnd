@@ -8,11 +8,7 @@ use Illuminate\Http\Response;
 
 class gymController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
     public function index()
     {
         $gyms = gym::all();
@@ -41,24 +37,13 @@ class gymController extends Controller
         return response()->json($res, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param gym $gym
-     * @return Response
-     */
+
     public function update(Request $request, gym $gym)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param gym $gym
-     * @return Response
-     */
+
     public function destroy(gym $gym)
     {
         //
