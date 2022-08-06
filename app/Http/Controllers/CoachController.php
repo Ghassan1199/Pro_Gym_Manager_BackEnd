@@ -57,9 +57,9 @@ class CoachController extends Controller
 
 
     //we need the $id for the coach
-    public function showAllUsers($id)
+    public function showAllUsers()
     {
-        $coach = coach::find($id);
+        $coach = coach::find(auth('coach-api')->id());
         $users = $coach->Users()->get();
         $res['users'] = $users;
 
@@ -67,44 +67,45 @@ class CoachController extends Controller
     }
 
     //we need the $id for the coach
-    public function showPrivateUsers($id)
+    public function showPrivateUsers()
     {
-        $coach = coach::find($id);
+        $coach = coach::find(auth('coach-api')->id());
         $users = $coach->subscription()->where('private', '=', '1')->get();
         $res['users'] = $users;
 
         return response()->json($res, 200);
     }
 
-    public function showAvailableCoaches($id)
-    {
-        $coaches = coach::where('gym_id', '=', $id)->get();
-        $available = [];
-        foreach ($coaches as $coach) {
-            if ($coach->contract()->value('end_date') > Carbon::now()) {
-                $available[] = $coach;
-            }
-        }
-        $res['Available_coaches'] = $available;
-        return response()->json($res, 200);
-    }
+//    public function showAvailableCoaches($id)
+//    {
+//        $coaches = coach::where('gym_id', '=', $id)->get();
+//        $available = [];
+//        foreach ($coaches as $coach) {
+//            if ($coach->contract()->value('end_date') > Carbon::now()) {
+//                $available[] = $coach;
+//            }
+//        }
+//        $res['Available_coaches'] = $available;
+//        return response()->json($res, 200);
+//    }
+//
+//    public function showUnAvailableCoaches($id)
+//    {
+//        $coaches = coach::where('gym_id', '=', $id)->get();
+//        $Unavailable = [];
+//        foreach ($coaches as $coach) {
+//            if ($coach->contract()->value('end_date') < Carbon::now()) {
+//                $Unavailable[] = $coach;
+//            }
+//        }
+//        $res['UnAvailable_coaches'] = $Unavailable;
+//        return response()->json($res, 200);
+//    }
 
-    public function showUnAvailableCoaches($id)
-    {
-        $coaches = coach::where('gym_id', '=', $id)->get();
-        $Unavailable = [];
-        foreach ($coaches as $coach) {
-            if ($coach->contract()->value('end_date') < Carbon::now()) {
-                $Unavailable[] = $coach;
-            }
-        }
-        $res['UnAvailable_coaches'] = $Unavailable;
-        return response()->json($res, 200);
-    }
 
-
-    public function show($id)
+    public function show()
     {
+        $id=auth('coach-api')->id();
         $coach = coach::find($id);
         return response()->json($coach, 200);
     }
@@ -134,32 +135,5 @@ class CoachController extends Controller
         //
     }
 
-    //    public function create_cont(Request $request)
-//    {
-//        $validator = Validator::make($request->all(), [
-//            'start_date' => 'required',
-//            'end_date' => 'required',
-//            'salary' => 'required',
-//            'coach_id' => 'required'
-//        ]);
-//
-//        if ($validator->fails()) {
-//            $msg = [$validator->errors()->all()];
-//            return response()->json(['msg' => $msg], 400);
-//        }
-//
-//        $coach = coach::find($request['coach_id']);
-//
-//        $cont = [
-//            'coach_id' => $request['coach_id'],
-//            'salary' => $request['salary'],
-//            'start_date' => $request['start_date'],
-//            'end_date' => $request['end_date']
-//        ];
-//
-//        $coach->contract()->create($cont);
-//
-//        return response()->json($cont, 200);
-//    }
 
 }

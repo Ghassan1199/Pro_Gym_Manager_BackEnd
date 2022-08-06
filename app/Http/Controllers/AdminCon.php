@@ -182,7 +182,7 @@ class AdminCon extends Controller
 
     public function showOnlyActive()
     {
-        $users = User::where('gym_id', '=', auth('admin-api')->id())->value('admin_id')->get();
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
         $active = [];
         foreach ($users as $user) {
             if ($user->subscription()->value('ends_at') >= Carbon::now()) {
@@ -195,7 +195,7 @@ class AdminCon extends Controller
 
     public function showOnlyInActive()
     {
-        $users = User::where('gym_id', '=', auth('admin-api')->id())->value('admin_id')->get();
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
         $inactive = [];
         foreach ($users as $user) {
             if ($user->subscription()->value('ends_at') < Carbon::now()) {
@@ -225,6 +225,39 @@ class AdminCon extends Controller
         ]);
         $res['msg']="$amount have been paid";
         return response()->json($res,200);
+    }
+
+    public function showCoach($id)
+    {
+        $coach = coach::find($id);
+        return response()->json($coach, 200);
+    }
+
+    public function showAvailableCoaches()
+    {
+
+        $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
+        $available = [];
+        foreach ($coaches as $coach) {
+            if ($coach->contract()->value('end_date') > Carbon::now()) {
+                $available[] = $coach;
+            }
+        }
+        $res['Available_coaches'] = $available;
+        return response()->json($res, 200);
+    }
+
+    public function showUnAvailableCoaches()
+    {
+        $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
+        $Unavailable = [];
+        foreach ($coaches as $coach) {
+            if ($coach->contract()->value('end_date') < Carbon::now()) {
+                $Unavailable[] = $coach;
+            }
+        }
+        $res['UnAvailable_coaches'] = $Unavailable;
+        return response()->json($res, 200);
     }
 
     public function update(Request $request, admin $admin)

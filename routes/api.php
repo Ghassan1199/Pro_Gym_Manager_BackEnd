@@ -31,41 +31,46 @@ Route::prefix('admin')->controller(AdminCon::class)->group(function () {
     Route::post('create_coach', 'addCoach');
     Route::post('create_contract', 'create_cont');
     Route::post('create_sub', 'create_sub');
-    Route::get('users_inactive/{id}', 'showOnlyInActive');
-    Route::get('users_active/{id}', 'showOnlyActive');
+    Route::post('add_payment','addPayment');
+
+    Route::get('users_inactive', 'showOnlyInActive');
+    Route::get('users_active', 'showOnlyActive');
     Route::get('show_sub/{id}', 'showSub');
     Route::get('show_cont/{id}','showCont');
-    Route::post('add_payment','addPayment');
+    Route::get('show_coach/{id}', 'showCoach');
+    Route::get('coach_available', 'showAvailableCoaches');
+    Route::get('coach_unavailable', 'showUnAvailableCoaches');
+
 });
 
 Route::prefix('login')->controller(LoginController::class)->group(function () {
 
     Route::post('admin', 'adminLogin');
-    Route::post('coach_login', 'coachLogin');
-    Route::post('user_login', 'userLogin');
+    Route::post('coach', 'coachLogin');
+    Route::post('user', 'userLogin');
 });
 
 Route::prefix('user')->controller(UsersController::class)->group(function () {
 
     Route::get('show_data', 'show');
-    Route::post('edit_days', 'editTrainingDays');
-
     Route::get('show_all_exe/', 'showAllExes');
     Route::get('show_exe/{id}', 'showExe');
     Route::get('show_days', 'showDays');
     Route::get('show_sub', 'showSub');
 
+    Route::post('edit_days', 'editTrainingDays');
+
 });
 
 Route::prefix('coach')->controller(CoachController::class)->group(function () {
     Route::get('show_cont','showCont');
-    Route::get('show_all_users/{id}', 'showAllUsers');
-    Route::get('show_private_users/{id}', 'showPrivateUsers');
-    Route::get('coach_available/{id}', 'showAvailableCoaches'); //this need to be moved to the admin
+    Route::get('show_all_users', 'showAllUsers');
+    Route::get('show_private_users', 'showPrivateUsers');
+    Route::get('show_coach', 'show');
+
     Route::post('create_qual', 'create_qual');
     Route::post('add_exe/{id}', 'addexe');
-    Route::get('show_coach/{id}', 'show');              // this need to be duplicated and move one to the admin
-    Route::get('coach_unavailable/{id}', 'showUnAvailableCoaches');  //this need to be moved to the admin
+
 });
 
 Route::get('show_gym/{id}', [gymController::class, 'show']);
