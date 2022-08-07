@@ -10,10 +10,8 @@ use App\Models\subscription;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Psy\Util\Json;
 
 class AdminCon extends Controller
 {
@@ -61,7 +59,8 @@ class AdminCon extends Controller
         return response()->json($res, 200);
     }
 
-    public function addUser(Request $request){
+    public function addUser(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -91,7 +90,8 @@ class AdminCon extends Controller
         return response()->json($user, 200);
     }
 
-    public function addCoach(Request $request){
+    public function addCoach(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -106,7 +106,7 @@ class AdminCon extends Controller
         }
 
         $coach = new coach;
-        $coach['first_name']= $request['first_name'];
+        $coach['first_name'] = $request['first_name'];
         $coach['last_name'] = $request['last_name'];
         $coach['password'] = Hash::make($request['password']);
         $coach['email'] = $request['email'];
@@ -148,6 +148,7 @@ class AdminCon extends Controller
     public function create_sub(Request $request)
     {
         $user = User::find($request['user_id']);
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'coach_id' => 'required',
@@ -156,27 +157,75 @@ class AdminCon extends Controller
             'private' => 'required',
             'paid_amount' => 'required',
             'fully_paid' => 'required',
-            'price' => 'required'
+            'price' => 'required',
+            'sat'=>'required',
+            'sun'=>'required',
+            'mon'=>'required',
+            'tue'=>'required',
+            'wed'=>'required',
+            'thu'=>'required',
+            'fri'=>'required',
 
         ]);
+
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
             return response()->json(['msg' => $msg], 400);
         }
 
+        $total_days=0;
+        if($request['sat']) $total_days++;
+        if($request['sun']) $total_days++;
+        if($request['mon']) $total_days++;
+        if($request['tue']) $total_days++;
+        if($request['wed']) $total_days++;
+        if($request['thu']) $total_days++;
+        if($request['fri']) $total_days++;
+
+
+        $coach = contract::where('coach_id', '=', $request['coach_id'])->get()->last();
+
+        $total_price = $request['price'];
+        if($total_days===4){
+            $total_price+=$request['price']*0.05;
+        }elseif ($total_days===5){
+            $total_price+=$request['price']*0.1;
+        }elseif ($total_days===6){
+            $total_price+=$request['price']*0.13;
+        }elseif ($total_days===7){
+            $total_price+=$request['price']*0.15;
+        }
+
+
+        if ($request['private']) {
+            $total_price += $coach['salary'] * 0.1;
+        }
         $sub = [
             'user_id' => $user['id'],
             'starts_at' => $request['starts_at'],
             'ends_at' => $request['ends_at'],
             'private' => $request['private'],
-            'price' => $request['price'],
             'paid_amount' => $request['paid_amount'],
             'fully_paid' => $request['fully_paid'],
-            'coach_id' => $request['coach_id']
+            'coach_id' => $request['coach_id'],
+            'price' => $total_price,
         ];
-
-
         $user->subscription()->create($sub);
+
+        $subs=subscription::where('user_id','=',$user['id'])->get()->last();
+
+        $subs->days()->create([
+
+            'sat' => $request['sat'],
+            'sun' => $request['sun'],
+            'mon' => $request['mon'],
+            'tue' => $request['tue'],
+            'wed' => $request['wed'],
+            'thu' => $request['thu'],
+            'fri' => $request['fri']
+
+        ]);
+
         return response()->json($sub, 200);
     }
 
@@ -208,23 +257,25 @@ class AdminCon extends Controller
 
     public function showSub($id)
     {
-        $sub = subscription::where('user_id', '=',$id)->get()->last();
-        return response()->json($sub,200);
+        $sub = subscription::where('user_id', '=', $id)->get()->last();
+        return response()->json($sub, 200);
     }
 
-    public function showCont($id){
-        $cont = contract::Where('coach_id','=',$id)->get()->last();
-        return response()->json($cont,200);
+    public function showCont($id)
+    {
+        $cont = contract::Where('coach_id', '=', $id)->get()->last();
+        return response()->json($cont, 200);
     }
 
-    public function addPayment(Request $request){
-        $amount=$request['amount'];
-        $sub = subscription::where('id','=',$request['sub_id'])->get()->last();
+    public function addPayment(Request $request)
+    {
+        $amount = $request['amount'];
+        $sub = subscription::where('id', '=', $request['sub_id'])->get()->last();
         $sub->payment()->create([
-            'amount'=>$request['amount']
+            'amount' => $request['amount']
         ]);
-        $res['msg']="$amount have been paid";
-        return response()->json($res,200);
+        $res['msg'] = "$amount have been paid";
+        return response()->json($res, 200);
     }
 
     public function showCoach($id)

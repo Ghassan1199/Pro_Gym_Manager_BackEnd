@@ -29,47 +29,35 @@ class UsersController extends Controller
             $msg = [$validator->errors()->all()];
             return response()->json($msg, 400);
         }
+
         $sub = subscription::where('user_id', '=', $request['user_id'])->get()->last();
         $day = day::where('sub_id', '=', $sub->id)->get()->first();
-        if (is_null($day)) {
 
-            $days = [
-                'sat' => $request['sat'],
-                'sun' => $request['sun'],
-                'mon' => $request['mon'],
-                'tue' => $request['tue'],
-                'wed' => $request['wed'],
-                'thu' => $request['thu'],
-                'fri' => $request['fri']
-            ];
+        $day['sat'] = $request['sat'];
+        $day['fri'] = $request['fri'];
+        $day['sun'] = $request['sun'];
+        $day['thu'] = $request['thu'];
+        $day['mon'] = $request['mon'];
+        $day['tue'] = $request['tue'];
+        $day['wed'] = $request['wed'];
 
-            $sub->days()->create($days);
-            return response()->json($days, 200);
-        } else {
+        $day->save();
+        $res['msg'] = "you`r days have been edited";
+        return response()->json([$res, $day], 200);
 
-            $day['sat'] = $request['sat'];
-            $day['fri'] = $request['fri'];
-            $day['sun'] = $request['sun'];
-            $day['thu'] = $request['thu'];
-            $day['mon'] = $request['mon'];
-            $day['tue'] = $request['tue'];
-            $day['wed'] = $request['wed'];
-
-            $day->save();
-            $res['msg'] = "you`r days have been edited";
-            return response()->json([$res, $day], 200);
-        }
     }
 
-    public function showDays()
+    public
+    function showDays()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
         $days = $sub->days()->get();
         return response()->json($days, 200);
     }
 
-    //need the user id to show all his exercieses
-    public function showAllExes()
+//need the user id to show all his exercieses
+    public
+    function showAllExes()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
         $exe = $sub->exercies()->get();
@@ -77,8 +65,9 @@ class UsersController extends Controller
         return response()->json($exe, 200);
     }
 
-    //need the exe id to show it`s full details
-    public function showExe($id)
+//need the exe id to show it`s full details
+    public
+    function showExe($id)
     {
         $exe = exercies::find($id);
         return response()->json($exe, 200);
@@ -86,13 +75,15 @@ class UsersController extends Controller
 
 //
 
-    public function show()
+    public
+    function show()
     {
         $user = User::find(auth('user-api')->id());
         return response($user, 200);
     }
 
-    public function update(Request $request)
+    public
+    function update(Request $request)
     {
         $user = User::find(auth('admin-api')->id());
         if ($request['phone_number']) {
@@ -106,13 +97,13 @@ class UsersController extends Controller
         return response($user, 200);
     }
 
-    public function showSub()
+    public
+    function showSub()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
-        return response()->json($sub,200);
+        return response()->json($sub, 200);
 
     }
-
 
 
 }
