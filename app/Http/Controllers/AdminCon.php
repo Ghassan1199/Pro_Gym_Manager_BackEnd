@@ -97,6 +97,7 @@ class AdminCon extends Controller
             'last_name' => 'required',
             'password' => 'required',
             'email' => 'required|unique:coach|email',
+            'speciality'=>'required',
             'birthday' => 'required',
         ]);
 
@@ -111,6 +112,7 @@ class AdminCon extends Controller
         $coach['password'] = Hash::make($request['password']);
         $coach['email'] = $request['email'];
         $coach['birthday'] = $request['birthday'];
+        $coach['speciality'] = $request['speciality'];
         $coach['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
         $coach->save();
 

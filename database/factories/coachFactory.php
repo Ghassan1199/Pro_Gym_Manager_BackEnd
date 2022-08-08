@@ -17,6 +17,7 @@ class coachFactory extends Factory
         return [
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
+            'speciality'=>$this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('ghassan232303'),
             'birthday' => $this->faker->date(),

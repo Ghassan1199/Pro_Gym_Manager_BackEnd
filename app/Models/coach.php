@@ -17,6 +17,7 @@ class coach extends Authenticatable
         'last_name',
         'email',
         'password',
+        'speciality',
         'birthday',
         'phone_number',
         'img_url'
@@ -42,15 +43,6 @@ class coach extends Authenticatable
         return $this->hasMany(contract::class, 'coach_id');
     }
 
-    public function qualifications()
-    {
-        return $this->belongsToMany(
-            qualifications::class,
-            'coach_quals',
-            'coach_id',
-            'qual_id'
-        );
-    }
 
     public function Users()
     {
