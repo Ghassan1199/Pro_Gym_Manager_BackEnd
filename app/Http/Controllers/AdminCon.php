@@ -96,7 +96,7 @@ class AdminCon extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'password' => 'required',
-            'email' => 'required|unique:coach|email',
+            'email' => 'required|unique:coaches|email',
             'speciality'=>'required',
             'birthday' => 'required',
         ]);
@@ -106,7 +106,7 @@ class AdminCon extends Controller
             return response()->json(['msg' => $msg], 400);
         }
 
-        $coach = new coach;
+        $coach = new coach();
         $coach['first_name'] = $request['first_name'];
         $coach['last_name'] = $request['last_name'];
         $coach['password'] = Hash::make($request['password']);
@@ -116,7 +116,7 @@ class AdminCon extends Controller
         $coach['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
         $coach->save();
 
-        return response()->json($coach, 200);
+        return response()->json($coach, 200,);
     }
 
     public function create_cont(Request $request)
@@ -310,6 +310,13 @@ class AdminCon extends Controller
             }
         }
         $res['UnAvailable_coaches'] = $Unavailable;
+        return response()->json($res, 200);
+    }
+
+    public function showAllCoaches()
+    {
+        $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
+        $res['coaches'] = $coaches;
         return response()->json($res, 200);
     }
 

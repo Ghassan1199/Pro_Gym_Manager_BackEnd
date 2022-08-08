@@ -24,11 +24,11 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(["message" => $validator->errors()->first()], 400);
+            return response()->json(null, 400,["message" => $validator->errors()->first()]);
         }
 
         if (admin::where('email', $email)->count() <= 0) {
-            return response(array("message" => "Email does not exist"), 400);
+            return response()->json(null, 400,["message" => "Email does not exist"]);
         }
 
         $admin = admin::where('email', $email)->first();
@@ -48,7 +48,7 @@ class LoginController extends Controller
                 200
             );
         } else {
-            return response(array("message" => "Wrong Credentials."), 400);
+            return response()->json(null, 401,["message" => "Wrong Credentials."]);
         }
     }
 

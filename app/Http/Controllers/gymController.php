@@ -29,9 +29,9 @@ class gymController extends Controller
         return response()->json($res, 200);
     }
 
-    public function showAllCoaches($id)
+    public function showAllCoaches()
     {
-        $gym = gym::find($id);
+        $gym = gym::find(auth("admin-api"));
         $coaches = $gym->coaches()->get();
         $res['coaches'] = $coaches;
         return response()->json($res, 200);

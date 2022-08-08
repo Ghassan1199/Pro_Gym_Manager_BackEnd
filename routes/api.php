@@ -32,13 +32,15 @@ Route::prefix('admin')->controller(AdminCon::class)->group(function () {
     Route::post('create_contract', 'create_cont');
     Route::post('create_sub', 'create_sub');
     Route::post('add_payment','addPayment');
+    Route::post('coach_available', 'showAvailableCoaches');
+    Route::post('show_all_coaches','showAllCoaches');
 
     Route::get('users_inactive', 'showOnlyInActive');
     Route::get('users_active', 'showOnlyActive');
     Route::get('show_sub/{id}', 'showSub');
     Route::get('show_cont/{id}','showCont');
     Route::get('show_coach/{id}', 'showCoach');
-    Route::get('coach_available', 'showAvailableCoaches');
+
     Route::get('coach_unavailable', 'showUnAvailableCoaches');
 
 });
@@ -75,5 +77,4 @@ Route::prefix('coach')->controller(CoachController::class)->group(function () {
 
 Route::get('show_gym/{id}', [gymController::class, 'show']);
 Route::get('gym/show_all_users/{id}', [gymController::class, 'showAllUsers']);
-Route::get('gym/show_all_coaches/{id}', [gymController::class, 'showAllCoaches']);
 
