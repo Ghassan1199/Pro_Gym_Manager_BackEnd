@@ -41,12 +41,29 @@ class AdminCon extends Controller
             $admin['email'] = $request['email'];
             $admin['birthday'] = $request['birthday'];
 
-            $admin->save();
+            if ($request['img_url']) {
+                $getImage = $request->file('img_url');
+                $imagename = $request['gym_name'] . '.' . $getImage->extension();
+                $imagepath = public_path() . '/images/gyms';
+                $getImage->move($imagepath, $imagename);
+                $img = url('images/gyms/' . $imagename);
+            }
 
-            $admin->gym()->create([
-                'title' => $request['gym_name'],
-                'address' => $request['gym_address']
-            ]);
+
+            $admin->save();
+            if ($img) {
+                $admin->gym()->create([
+                    'title' => $request['gym_name'],
+                    'address' => $request['gym_address'],
+                    'logo_url' => $img
+                ]);
+            } else {
+                $admin->gym()->create([
+                    'title' => $request['gym_name'],
+                    'address' => $request['gym_address'],
+                ]);
+            }
+
         }
         $res = ['admin' => $admin, 'gym' => $admin->gym()->get()->first()];
         return response()->json($res, 200);
@@ -70,10 +87,12 @@ class AdminCon extends Controller
             'weight' => 'required',
             'birthday' => 'required|date',
         ]);
+
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
             return response()->json(['msg' => $msg], 400);
         }
+
 
         $user = new User;
         $user['first_name'] = $request['first_name'];
@@ -81,9 +100,16 @@ class AdminCon extends Controller
         $user['password'] = Hash::make($request['password']);
         $user['email'] = $request['email'];
         $user['height'] = $request['height'];
+        $user['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
         $user['weight'] = $request['weight'];
         $user['birthday'] = $request['birthday'];
-        $user['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
+        if ($request['img_url']) {
+            $getImage = $request->file('img_url');
+            $imagename = $request['first_name'] . '.' . $getImage->extension();
+            $imagepath = public_path() . '/images/users';
+            $getImage->move($imagepath, $imagename);
+            $user['img_url'] = url('images/users/' . $imagename);
+        }
 
         $user->save();
 
@@ -97,7 +123,7 @@ class AdminCon extends Controller
             'last_name' => 'required',
             'password' => 'required',
             'email' => 'required|unique:coaches|email',
-            'speciality'=>'required',
+            'speciality' => 'required',
             'birthday' => 'required',
         ]);
 
@@ -106,14 +132,26 @@ class AdminCon extends Controller
             return response()->json(['msg' => $msg], 400);
         }
 
+
         $coach = new coach();
         $coach['first_name'] = $request['first_name'];
         $coach['last_name'] = $request['last_name'];
         $coach['password'] = Hash::make($request['password']);
         $coach['email'] = $request['email'];
         $coach['birthday'] = $request['birthday'];
-        $coach['speciality'] = $request['speciality'];
         $coach['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
+
+        if ($request['img_url']) {
+            $getImage = $request->file('img_url');
+            $imagename = $request['first_name'] . '.' . $getImage->extension();
+            $imagepath = public_path() . '/images/coaches';
+            $getImage->move($imagepath, $imagename);
+            $coach['img_url'] = url('images/coaches/' . $imagename);
+        }
+
+        if ($request['phone_number']) $coach['phone_number'] = $request['phone_number'];
+        $coach['speciality'] = $request['speciality'];
+
         $coach->save();
 
         return response()->json($coach, 200,);
@@ -160,13 +198,13 @@ class AdminCon extends Controller
             'paid_amount' => 'required',
             'fully_paid' => 'required',
             'price' => 'required',
-            'sat'=>'required',
-            'sun'=>'required',
-            'mon'=>'required',
-            'tue'=>'required',
-            'wed'=>'required',
-            'thu'=>'required',
-            'fri'=>'required',
+            'sat' => 'required',
+            'sun' => 'required',
+            'mon' => 'required',
+            'tue' => 'required',
+            'wed' => 'required',
+            'thu' => 'required',
+            'fri' => 'required',
 
         ]);
 
@@ -175,27 +213,27 @@ class AdminCon extends Controller
             return response()->json(['msg' => $msg], 400);
         }
 
-        $total_days=0;
-        if($request['sat']) $total_days++;
-        if($request['sun']) $total_days++;
-        if($request['mon']) $total_days++;
-        if($request['tue']) $total_days++;
-        if($request['wed']) $total_days++;
-        if($request['thu']) $total_days++;
-        if($request['fri']) $total_days++;
+        $total_days = 0;
+        if ($request['sat']) $total_days++;
+        if ($request['sun']) $total_days++;
+        if ($request['mon']) $total_days++;
+        if ($request['tue']) $total_days++;
+        if ($request['wed']) $total_days++;
+        if ($request['thu']) $total_days++;
+        if ($request['fri']) $total_days++;
 
 
         $coach = contract::where('coach_id', '=', $request['coach_id'])->get()->last();
 
         $total_price = $request['price'];
-        if($total_days===4){
-            $total_price+=$request['price']*0.05;
-        }elseif ($total_days===5){
-            $total_price+=$request['price']*0.1;
-        }elseif ($total_days===6){
-            $total_price+=$request['price']*0.13;
-        }elseif ($total_days===7){
-            $total_price+=$request['price']*0.15;
+        if ($total_days === 4) {
+            $total_price += $request['price'] * 0.05;
+        } elseif ($total_days === 5) {
+            $total_price += $request['price'] * 0.1;
+        } elseif ($total_days === 6) {
+            $total_price += $request['price'] * 0.13;
+        } elseif ($total_days === 7) {
+            $total_price += $request['price'] * 0.15;
         }
 
 
@@ -214,7 +252,7 @@ class AdminCon extends Controller
         ];
         $user->subscription()->create($sub);
 
-        $subs=subscription::where('user_id','=',$user['id'])->get()->last();
+        $subs = subscription::where('user_id', '=', $user['id'])->get()->last();
 
         $subs->days()->create([
 
@@ -254,6 +292,13 @@ class AdminCon extends Controller
             }
         }
         $res['UnActive_users'] = $inactive;
+        return response()->json($res, 200);
+    }
+
+    public function showAllUsers()
+    {
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
+        $res['users'] = $users;
         return response()->json($res, 200);
     }
 
@@ -316,7 +361,15 @@ class AdminCon extends Controller
     public function showAllCoaches()
     {
         $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
-        $res['coaches'] = $coaches;
+        foreach ($coaches as $coach) {
+            $cont['cont'] = contract::where('coach_id', '=', $coach['id'])->get('salary')->last();
+            if ($cont['cont']) {
+                $coach['salary'] = $cont['cont']['salary'];
+            }
+
+            $res['coaches'][] = $coach;
+        }
+
         return response()->json($res, 200);
     }
 

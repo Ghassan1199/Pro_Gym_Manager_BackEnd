@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\admin;
 use App\Models\coach;
+use App\Models\gym;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -36,7 +37,7 @@ class LoginController extends Controller
         if (password_verify($password, $admin->password)) {
 
             $admin->last_login = Carbon::now();
-
+            $admin['gym']=gym::where('id','=',$admin['id'])->get()->last();
             return response(
                 array("message" => "Sign In Successful", "data" => [
                     "admin" => $admin,

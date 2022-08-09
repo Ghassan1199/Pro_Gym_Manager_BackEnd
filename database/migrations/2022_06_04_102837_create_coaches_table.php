@@ -22,7 +22,7 @@ class CreateCoachesTable extends Migration
             $table->string('phone_number')->nullable();
             $table->date('birthday');
             $table->string('speciality');
-            $table->string('img_url')->nullable();
+            $table->text('img_url')->nullable();
             $table->foreignId('gym_id')->references('id')
                 ->on('gyms');
             $table->timestamps();
