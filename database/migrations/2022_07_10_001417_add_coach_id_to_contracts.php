@@ -15,7 +15,7 @@ class AddCoachIdToContracts extends Migration
     {
         Schema::table('contracts', function (Blueprint $table) {
             $table->foreignId('coach_id')
-            ->references('id')->on('coaches');
+                ->references('id')->on('coaches');
         });
     }
 

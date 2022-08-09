@@ -28,8 +28,9 @@ class subscription extends Model
         return $this->belongsTo(coach::class, 'coach_id');
     }
 
-    public function User(){
-        return $this->belongsTo(User::class,'user_id');
+    public function User()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function days(): HasOne
@@ -42,12 +43,12 @@ class subscription extends Model
         return $this->hasMany(payment::class, 'sub_id');
     }
 
-    public function exercies() 
+    public function exercies()
     {
         return $this->belongsToMany(
-            exercies::class, 
+            exercies::class,
             'sub_exes',
-            'sub_id', 
+            'sub_id',
             'exe_id');
     }
 

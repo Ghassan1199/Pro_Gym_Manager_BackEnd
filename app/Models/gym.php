@@ -19,6 +19,7 @@ class gym extends Model
     {
         return $this->hasMany(coach::class, 'gym_id');
     }
+
     public function users()
     {
         return $this->hasMany(User::class, 'gym_id');

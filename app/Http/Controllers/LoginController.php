@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin;
+use App\Models\coach;
+use App\Models\gym;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use App\Models\coach;
-use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -24,11 +25,11 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(["message" => $validator->errors()->first()], 400);
+            return response()->json(null, 400,["message" => $validator->errors()->first()]);
         }
 
         if (admin::where('email', $email)->count() <= 0) {
-            return response(array("message" => "Email does not exist"), 400);
+            return response()->json(null, 400,["message" => "Email does not exist"]);
         }
 
         $admin = admin::where('email', $email)->first();
@@ -36,7 +37,7 @@ class LoginController extends Controller
         if (password_verify($password, $admin->password)) {
 
             $admin->last_login = Carbon::now();
-
+            $admin['gym']=gym::where('id','=',$admin['id'])->get()->last();
             return response(
                 array("message" => "Sign In Successful", "data" => [
                     "admin" => $admin,
@@ -48,7 +49,7 @@ class LoginController extends Controller
                 200
             );
         } else {
-            return response(array("message" => "Wrong Credentials."), 400);
+            return response()->json(null, 401,["message" => "Wrong Credentials."]);
         }
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 class coachFactory extends Factory
 {
@@ -14,12 +15,13 @@ class coachFactory extends Factory
     public function definition()
     {
         return [
-            'first_name'=>$this->faker->firstName(),
-            'last_name'=>$this->faker->lastName(),
-            'email'=>$this->faker->unique()->safeEmail(),
-            'password'=>'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            'birthday'=>$this->faker->date(),
-            'phone_number'=>$this->faker->phoneNumber(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'speciality'=>$this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => Hash::make('ghassan232303'),
+            'birthday' => $this->faker->date(),
+            'phone_number' => $this->faker->phoneNumber(),
         ];
     }
 }

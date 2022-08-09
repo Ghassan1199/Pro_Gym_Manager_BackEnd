@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class payment extends Model
 {
-   use HasFactory; 
+    use HasFactory;
 
     protected $fillable = [
         'amount',
-    ]; 
-    
+    ];
+
     public function sub()
     {
-        return $this->belongsTo(subscription::class,'sub_id');
+        return $this->belongsTo(subscription::class, 'sub_id');
     }
 
 }

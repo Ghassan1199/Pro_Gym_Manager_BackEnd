@@ -1,8 +1,10 @@
 <?php
 
 namespace Database\Factories;
-use Illuminate\Support\Str;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Testing\Fluent\Concerns\Has;
+use Illuminate\Support\Facades\Hash;
 
 class adminFactory extends Factory
 {
@@ -16,8 +18,8 @@ class adminFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'birthday'=>$this->faker->date(),        
+            'password' => Hash::make('ghassan232303'),
+            'birthday' => $this->faker->date(),
         ];
     }
 }

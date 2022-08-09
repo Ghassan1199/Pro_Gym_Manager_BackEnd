@@ -9,11 +9,13 @@ class contract extends Model
 {
     use HasFactory;
 
-    protected $fillable=[
+    protected $fillable = [
         'salary',
         'start_date',
-        'end_date'
-        ];
+        'end_date',
+        'coach_id'
+    ];
+
     public function coach()
     {
         return $this->belongsTo(coach::class, 'coach_id');

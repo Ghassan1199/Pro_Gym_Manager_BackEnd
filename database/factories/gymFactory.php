@@ -14,8 +14,8 @@ class gymFactory extends Factory
     public function definition()
     {
         return [
-            'title'=>$this->faker->name(),
-            'address'=>$this->faker->address()
+            'title' => $this->faker->name(),
+            'address' => $this->faker->address()
         ];
     }
 }
