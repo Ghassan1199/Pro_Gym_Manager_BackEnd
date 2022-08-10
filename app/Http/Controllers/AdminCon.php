@@ -129,7 +129,7 @@ class AdminCon extends Controller
 
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
-            return response()->json(['msg' => $msg], 400);
+            return response()->json(['msg' => $msg], 401);
         }
 
 
@@ -140,6 +140,7 @@ class AdminCon extends Controller
         $coach['email'] = $request['email'];
         $coach['birthday'] = $request['birthday'];
         $coach['gym_id'] = gym::where('admin_id', '=', auth('admin-api')->id())->value('admin_id');
+        $coach['speciality'] = $request['speciality'];
 
         if ($request['img_url']) {
             $getImage = $request->file('img_url');
@@ -150,11 +151,68 @@ class AdminCon extends Controller
         }
 
         if ($request['phone_number']) $coach['phone_number'] = $request['phone_number'];
-        $coach['speciality'] = $request['speciality'];
 
         $coach->save();
 
         return response()->json($coach, 200,);
+    }
+
+    public function editCoach(Request $request, $id)
+    {
+
+        $coach = coach::find($id);
+        if ($request['password']) {
+            $coach['password'] = Hash::make($request['password']);
+        }
+        if ($request['email']) {
+            $coach['email'] = $request['email'];
+        }
+
+        if ($request['img_url']) {
+            $getImage = $request->file('img_url');
+            $imagename = $request['first_name'] . '.' . $getImage->extension();
+            $imagepath = public_path() . '/images/coaches';
+            $getImage->move($imagepath, $imagename);
+            $coach['img_url'] = url('images/coaches/' . $imagename);
+        }
+
+        if ($request['speciality']) {
+            $coach['speciality'] = $request['speciality'];
+        }
+        $coach->save();
+        return response()->json($coach, 200);
+    }
+
+    public function editUser(Request $request, $id)
+    {
+
+        $user = user::find($id);
+        if ($request['email']) {
+            $user['email'] = $request['email'];
+        }
+
+        if ($request['password']) {
+            $user['password'] = Hash::make($request['password']);
+        }
+
+        if ($request['height']) {
+            $user['height'] = Hash::make($request['height']);
+        }
+
+        if ($request['weight']) {
+            $user['weight'] = Hash::make($request['weight']);
+        }
+
+        if ($request['img_url']) {
+            $getImage = $request->file('img_url');
+            $imagename = $request['first_name'] . '.' . $getImage->extension();
+            $imagepath = public_path() . '/images/coaches';
+            $getImage->move($imagepath, $imagename);
+            $user['img_url'] = url('images/coaches/' . $imagename);
+        }
+
+        $user->save();
+        return response()->json($user, 200);
     }
 
     public function create_cont(Request $request)
@@ -306,9 +364,9 @@ class AdminCon extends Controller
     {
         $coach = coach::find($id);
         $users = $coach->Users()->get();
-        foreach ($users as $user){
-            $subscription=subscription::where('user_id','=',$user['id'])->get()->last();
-            $user['private']=$subscription['private'];
+        foreach ($users as $user) {
+            $subscription = subscription::where('user_id', '=', $user['id'])->get()->last();
+            $user['private'] = $subscription['private'];
             $res['users'] = $users;
         }
         return response()->json($res, 200);

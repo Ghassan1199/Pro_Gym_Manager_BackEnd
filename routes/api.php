@@ -35,6 +35,8 @@ Route::prefix('admin')->controller(AdminCon::class)->group(function () {
     Route::post('coach_available', 'showAvailableCoaches');
     Route::post('show_all_coaches','showAllCoaches');
     Route::post('all_users','showAllUsers');
+    Route::post('edit_coach/{id}','editCoach');
+    Route::post('edit_user/{id}','editUser');
 
     Route::get('users_inactive', 'showOnlyInActive');
     Route::get("users_coach/{id}",'showAllUsersCoach');
