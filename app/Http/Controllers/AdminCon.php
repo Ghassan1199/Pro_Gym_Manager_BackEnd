@@ -186,7 +186,7 @@ class AdminCon extends Controller
     public function editUser(Request $request, $id)
     {
 
-        $user = user::find($id);
+        $user = User::find($id);
         if ($request['email']) {
             $user['email'] = $request['email'];
         }
