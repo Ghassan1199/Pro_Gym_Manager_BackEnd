@@ -302,6 +302,18 @@ class AdminCon extends Controller
         return response()->json($res, 200);
     }
 
+    public function showAllUsersCoach($id)
+    {
+        $coach = coach::find($id);
+        $users = $coach->Users()->get();
+        foreach ($users as $user){
+            $subscription=subscription::where('user_id','=',$user['id'])->get()->last();
+            $user['private']=$subscription['private'];
+            $res['users'] = $users;
+        }
+        return response()->json($res, 200);
+    }
+
     public function showSub($id)
     {
         $sub = subscription::where('user_id', '=', $id)->get()->last();
@@ -328,7 +340,11 @@ class AdminCon extends Controller
     public function showCoach($id)
     {
         $coach = coach::find($id);
-        return response()->json($coach, 200);
+        $contract = contract::where("coach_id", '=', $id)->get()->last();
+        $coach['starts_at'] = $contract['start_date'];
+        $coach['ends_at'] = $contract['end_date'];
+        $coach['salary'] = $contract['salary'];
+        return response()->json(["coach" => $coach], 200);
     }
 
     public function showAvailableCoaches()
