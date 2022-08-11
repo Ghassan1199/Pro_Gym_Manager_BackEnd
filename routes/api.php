@@ -31,21 +31,23 @@ Route::prefix('admin')->controller(AdminCon::class)->group(function () {
     Route::post('create_coach', 'addCoach');
     Route::post('create_contract', 'create_cont');
     Route::post('create_sub', 'create_sub');
-    Route::post('add_payment','addPayment');
+    Route::post('add_payment', 'addPayment');
     Route::post('coach_available', 'showAvailableCoaches');
-    Route::post('show_all_coaches','showAllCoaches');
-    Route::post('all_users','showAllUsers');
-    Route::post('edit_coach/{id}','editCoach');
-    Route::post('edit_user/{id}','editUser');
+    Route::post('coach_unavailable', 'showUnAvailableCoaches');
 
-    Route::get('users_inactive', 'showOnlyInActive');
-    Route::get("users_coach/{id}",'showAllUsersCoach');
-    Route::get('users_active', 'showOnlyActive');
+    Route::post('show_all_coaches', 'showAllCoaches');
+    Route::post('all_users', 'showAllUsers');
+    Route::post('edit_coach/{id}', 'editCoach');
+    Route::post('edit_user/{id}', 'editUser');
+    Route::post('inactive_sub', 'showOnlyInActive');
+    Route::post('active_sub', 'showOnlyActive');
+
+
+    Route::get("users_coach/{id}", 'showAllUsersCoach');
     Route::get('show_sub/{id}', 'showSub');
-    Route::get('show_cont/{id}','showCont');
+    Route::get('show_cont/{id}', 'showCont');
     Route::get('show_coach/{id}', 'showCoach');
-
-    Route::get('coach_unavailable', 'showUnAvailableCoaches');
+    Route::get('payments/{id}', 'showPayments');
 
 });
 
@@ -69,7 +71,7 @@ Route::prefix('user')->controller(UsersController::class)->group(function () {
 });
 
 Route::prefix('coach')->controller(CoachController::class)->group(function () {
-    Route::get('show_cont','showCont');
+    Route::get('show_cont', 'showCont');
     Route::get('show_all_users', 'showAllUsers');
     Route::get('show_private_users', 'showPrivateUsers');
     Route::get('show_coach', 'show');

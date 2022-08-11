@@ -6,6 +6,7 @@ use App\Models\admin;
 use App\Models\coach;
 use App\Models\contract;
 use App\Models\gym;
+use App\Models\payment;
 use App\Models\subscription;
 use App\Models\User;
 use Carbon\Carbon;
@@ -150,7 +151,9 @@ class AdminCon extends Controller
             $coach['img_url'] = url('images/coaches/' . $imagename);
         }
 
-        if ($request['phone_number']) $coach['phone_number'] = $request['phone_number'];
+        if ($request['phone_number']) {
+            $coach['phone_number'] = $request['phone_number'];
+        }
 
         $coach->save();
 
@@ -175,6 +178,9 @@ class AdminCon extends Controller
             $getImage->move($imagepath, $imagename);
             $coach['img_url'] = url('images/coaches/' . $imagename);
         }
+        if ($request['phone_number']) {
+            $coach['phone_number'] = $request['phone_number'];
+        }
 
         if ($request['speciality']) {
             $coach['speciality'] = $request['speciality'];
@@ -185,6 +191,14 @@ class AdminCon extends Controller
 
     public function editUser(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'unique:coaches'
+        ]);
+
+        if ($validator->fails()) {
+            $msg = [$validator->errors()->all()];
+            return response()->json(['msg' => $msg], 403, ["message" => $validator->errors()->all()]);
+        }
 
         $user = User::find($id);
         if ($request['email']) {
@@ -196,11 +210,11 @@ class AdminCon extends Controller
         }
 
         if ($request['height']) {
-            $user['height'] = Hash::make($request['height']);
+            $user['height'] = $request['height'];
         }
 
         if ($request['weight']) {
-            $user['weight'] = Hash::make($request['weight']);
+            $user['weight'] = $request['weight'];
         }
 
         if ($request['img_url']) {
@@ -254,7 +268,6 @@ class AdminCon extends Controller
             'ends_at' => 'required',
             'private' => 'required',
             'paid_amount' => 'required',
-            'fully_paid' => 'required',
             'price' => 'required',
             'sat' => 'required',
             'sun' => 'required',
@@ -268,49 +281,31 @@ class AdminCon extends Controller
 
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
-            return response()->json(['msg' => $msg], 400);
+            return response()->json(['msg' => $msg], 403, ["message" => $validator->errors()->all()]);
         }
 
-        $total_days = 0;
-        if ($request['sat']) $total_days++;
-        if ($request['sun']) $total_days++;
-        if ($request['mon']) $total_days++;
-        if ($request['tue']) $total_days++;
-        if ($request['wed']) $total_days++;
-        if ($request['thu']) $total_days++;
-        if ($request['fri']) $total_days++;
-
-
-        $coach = contract::where('coach_id', '=', $request['coach_id'])->get()->last();
-
-        $total_price = $request['price'];
-        if ($total_days === 4) {
-            $total_price += $request['price'] * 0.05;
-        } elseif ($total_days === 5) {
-            $total_price += $request['price'] * 0.1;
-        } elseif ($total_days === 6) {
-            $total_price += $request['price'] * 0.13;
-        } elseif ($total_days === 7) {
-            $total_price += $request['price'] * 0.15;
+        $fullypaid = "0";
+        if ($request['paid_amount'] == $request['price']) {
+            $fullypaid = "1";
         }
 
-
-        if ($request['private']) {
-            $total_price += $coach['salary'] * 0.1;
-        }
         $sub = [
             'user_id' => $user['id'],
             'starts_at' => $request['starts_at'],
             'ends_at' => $request['ends_at'],
             'private' => $request['private'],
             'paid_amount' => $request['paid_amount'],
-            'fully_paid' => $request['fully_paid'],
+            'fully_paid' => $fullypaid,
             'coach_id' => $request['coach_id'],
-            'price' => $total_price,
+            'price' => $request['price'],
         ];
         $user->subscription()->create($sub);
 
         $subs = subscription::where('user_id', '=', $user['id'])->get()->last();
+
+        $subs->payment()->create([
+            'amount' => $request['paid_amount']
+        ]);
 
         $subs->days()->create([
 
@@ -333,25 +328,16 @@ class AdminCon extends Controller
         $active = [];
         foreach ($users as $user) {
             if ($user->subscription()->value('ends_at') >= Carbon::now()) {
-                $active[] = $user;
+                $contract['contract'] = $user->subscription()->get()->last();
+                $contract['first_name'] = $user['first_name'];
+                $contract['last_name'] = $user['last_name'];
+                $active[]['info'] = $contract;
             }
         }
         $res['Active_users'] = $active;
         return response()->json($res, 200);
     }
 
-    public function showOnlyInActive()
-    {
-        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
-        $inactive = [];
-        foreach ($users as $user) {
-            if ($user->subscription()->value('ends_at') < Carbon::now()) {
-                $inactive[] = $user;
-            }
-        }
-        $res['UnActive_users'] = $inactive;
-        return response()->json($res, 200);
-    }
 
     public function showAllUsers()
     {
@@ -375,6 +361,22 @@ class AdminCon extends Controller
     public function showSub($id)
     {
         $sub = subscription::where('user_id', '=', $id)->get()->last();
+        $payments = payment::where('sub_id', '=', $sub['id'])->get();
+        $paid = 0;
+        foreach ($payments as $payment) {
+            $paid += $payment['amount'];
+
+        }
+
+        if ($paid >= $sub['price']) {
+            $sub['fully_paid'] = TRUE;
+        } else {
+            $sub['fully_paid'] = FALSE;
+        }
+        $sub['paid_amount'] = $paid;
+        $sub->save();
+        $coach = coach::find($sub["coach_id"]);
+        $sub['coach_name'] = "$coach->first_name $coach->last_name";
         return response()->json($sub, 200);
     }
 
@@ -405,6 +407,25 @@ class AdminCon extends Controller
         return response()->json(["coach" => $coach], 200);
     }
 
+    public function showOnlyInActive()
+    {
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
+        $inactive = [];
+        foreach ($users as $user) {
+            if ($user->subscription()->value('ends_at') < Carbon::now()) {
+                $contract['contract'] = $user->subscription()->get()->last();
+                if (!is_null($contract['contract'])) {
+                    $contract['first_name'] = $user['first_name'];
+                    $contract['last_name'] = $user['last_name'];
+                    $inactive[]['info'] = $contract;
+                }
+            }
+        }
+
+        $res['inActive_users'] = $inactive;
+        return response()->json($res, 200);
+    }
+
     public function showAvailableCoaches()
     {
 
@@ -412,7 +433,10 @@ class AdminCon extends Controller
         $available = [];
         foreach ($coaches as $coach) {
             if ($coach->contract()->value('end_date') > Carbon::now()) {
-                $available[] = $coach;
+                $contract['contract'] = $coach->contract()->get()->last();
+                $contract['first_name'] = $coach['first_name'];
+                $contract['last_name'] = $coach['last_name'];
+                $available[]['info'] = $contract;
             }
         }
         $res['Available_coaches'] = $available;
@@ -425,7 +449,11 @@ class AdminCon extends Controller
         $Unavailable = [];
         foreach ($coaches as $coach) {
             if ($coach->contract()->value('end_date') < Carbon::now()) {
-                $Unavailable[] = $coach;
+                $contract['contract'] = $coach->contract()->get()->last();
+                $contract['first_name'] = $coach['first_name'];
+                $contract['last_name'] = $coach['last_name'];
+                $Unavailable[]['info'] = $contract;
+
             }
         }
         $res['UnAvailable_coaches'] = $Unavailable;
@@ -445,6 +473,12 @@ class AdminCon extends Controller
         }
 
         return response()->json($res, 200);
+    }
+
+    public function showPayments($id)
+    {
+        $payments = payment::where('sub_id', '=', $id)->get()->all();
+        return response()->json(["payments" => $payments], 200);
     }
 
     public function update(Request $request, admin $admin)
