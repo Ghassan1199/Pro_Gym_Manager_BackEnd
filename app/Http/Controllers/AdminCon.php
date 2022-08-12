@@ -130,7 +130,7 @@ class AdminCon extends Controller
 
         if ($validator->fails()) {
             $msg = [$validator->errors()->all()];
-            return response()->json(['msg' => $msg], 401);
+            return response()->json(['msg' => $msg], 401, ["meesage" => $validator->errors()->all()]);
         }
 
 
@@ -150,6 +150,7 @@ class AdminCon extends Controller
             $getImage->move($imagepath, $imagename);
             $coach['img_url'] = url('images/coaches/' . $imagename);
         }
+
 
         if ($request['phone_number']) {
             $coach['phone_number'] = $request['phone_number'];
@@ -327,7 +328,8 @@ class AdminCon extends Controller
         $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
         $active = [];
         foreach ($users as $user) {
-            if ($user->subscription()->value('ends_at') >= Carbon::now()) {
+            $sub = $user->subscription()->get()->last();
+            if ($sub['ends_at'] >= Carbon::now()) {
                 $contract['contract'] = $user->subscription()->get()->last();
                 $contract['first_name'] = $user['first_name'];
                 $contract['last_name'] = $user['last_name'];
@@ -335,6 +337,26 @@ class AdminCon extends Controller
             }
         }
         $res['Active_users'] = $active;
+        return response()->json($res, 200);
+    }
+
+    public function showOnlyInActive()
+    {
+        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
+        $inactive = [];
+        foreach ($users as $user) {
+            $sub = $user->subscription()->get()->last();
+            if ($sub['ends_at'] < Carbon::now()) {
+                $contract['contract'] = $user->subscription()->get()->last();
+                if (!is_null($contract['contract'])) {
+                    $contract['first_name'] = $user['first_name'];
+                    $contract['last_name'] = $user['last_name'];
+                    $inactive[]['info'] = $contract;
+                }
+            }
+        }
+
+        $res['inActive_users'] = $inactive;
         return response()->json($res, 200);
     }
 
@@ -407,24 +429,7 @@ class AdminCon extends Controller
         return response()->json(["coach" => $coach], 200);
     }
 
-    public function showOnlyInActive()
-    {
-        $users = User::where('gym_id', '=', auth('admin-api')->id())->get();
-        $inactive = [];
-        foreach ($users as $user) {
-            if ($user->subscription()->value('ends_at') < Carbon::now()) {
-                $contract['contract'] = $user->subscription()->get()->last();
-                if (!is_null($contract['contract'])) {
-                    $contract['first_name'] = $user['first_name'];
-                    $contract['last_name'] = $user['last_name'];
-                    $inactive[]['info'] = $contract;
-                }
-            }
-        }
 
-        $res['inActive_users'] = $inactive;
-        return response()->json($res, 200);
-    }
 
     public function showAvailableCoaches()
     {
@@ -432,10 +437,18 @@ class AdminCon extends Controller
         $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
         $available = [];
         foreach ($coaches as $coach) {
-            if ($coach->contract()->value('end_date') > Carbon::now()) {
+            $con = $coach->contract()->get()->last();
+
+            if ($con['end_date'] > Carbon::now()) {
                 $contract['contract'] = $coach->contract()->get()->last();
                 $contract['first_name'] = $coach['first_name'];
                 $contract['last_name'] = $coach['last_name'];
+                $contract['speciality'] = $coach['speciality'];
+                $contract['email'] = $coach['email'];
+                $contract['birthday'] = $coach['birthday'];
+                $contract['phone_number'] = $coach['phone_number'];
+                $contract['id'] = $coach['id'];
+
                 $available[]['info'] = $contract;
             }
         }
@@ -448,14 +461,15 @@ class AdminCon extends Controller
         $coaches = coach::where('gym_id', '=', auth('admin-api')->id())->get();
         $Unavailable = [];
         foreach ($coaches as $coach) {
-            if ($coach->contract()->value('end_date') < Carbon::now()) {
+            $con = $coach->contract()->get()->last();
+            if ($con['end_date'] < Carbon::now()) {
                 $contract['contract'] = $coach->contract()->get()->last();
                 $contract['first_name'] = $coach['first_name'];
                 $contract['last_name'] = $coach['last_name'];
                 $Unavailable[]['info'] = $contract;
-
             }
         }
+
         $res['UnAvailable_coaches'] = $Unavailable;
         return response()->json($res, 200);
     }

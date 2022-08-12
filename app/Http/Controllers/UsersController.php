@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\coach;
 use App\Models\day;
 use App\Models\exercies;
+use App\Models\payment;
 use App\Models\subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -55,9 +57,8 @@ class UsersController extends Controller
         return response()->json($days, 200);
     }
 
-//need the user id to show all his exercieses
-    public
-    function showAllExes()
+    //need the user id to show all his exercieses
+    public function showAllExes()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
         $exe = $sub->exercies()->get();
@@ -79,7 +80,8 @@ class UsersController extends Controller
     function show()
     {
         $user = User::find(auth('user-api')->id());
-        return response($user, 200);
+        $res['user'] = $user;
+        return response($res, 200);
     }
 
     public
@@ -101,6 +103,22 @@ class UsersController extends Controller
     function showSub()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
+        $payments = payment::where('sub_id', '=', $sub['id'])->get();
+        $paid = 0;
+        foreach ($payments as $payment) {
+            $paid += $payment['amount'];
+
+        }
+
+        if ($paid >= $sub['price']) {
+            $sub['fully_paid'] = TRUE;
+        } else {
+            $sub['fully_paid'] = FALSE;
+        }
+        $sub['paid_amount'] = $paid;
+        $sub->save();
+        $coach = coach::find($sub["coach_id"]);
+        $sub['coach_name'] = "$coach->first_name $coach->last_name";
         return response()->json($sub, 200);
 
     }

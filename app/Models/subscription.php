@@ -43,13 +43,9 @@ class subscription extends Model
         return $this->hasMany(payment::class, 'sub_id');
     }
 
-    public function exercies()
+    public function exercies(): HasMany
     {
-        return $this->belongsToMany(
-            exercies::class,
-            'sub_exes',
-            'sub_id',
-            'exe_id');
+        return $this->hasMany(exercies::class, 'sub_id');
     }
 
 }

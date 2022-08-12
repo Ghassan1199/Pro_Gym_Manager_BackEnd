@@ -60,21 +60,23 @@ Route::prefix('login')->controller(LoginController::class)->group(function () {
 
 Route::prefix('user')->controller(UsersController::class)->group(function () {
 
-    Route::get('show_data', 'show');
+    Route::post('show_data', 'show');
     Route::get('show_all_exe/', 'showAllExes');
     Route::get('show_exe/{id}', 'showExe');
     Route::get('show_days', 'showDays');
-    Route::get('show_sub', 'showSub');
+    Route::post('show_sub', 'showSub');
 
     Route::post('edit_days', 'editTrainingDays');
 
 });
 
 Route::prefix('coach')->controller(CoachController::class)->group(function () {
-    Route::get('show_cont', 'showCont');
-    Route::get('show_all_users', 'showAllUsers');
-    Route::get('show_private_users', 'showPrivateUsers');
-    Route::get('show_coach', 'show');
+    Route::post('show_cont', 'showCont');
+    Route::post('show_all_users', 'showAllUsers');
+    Route::post('show_private_users', 'showPrivateUsers');
+    Route::post('show_coach', 'show');
+    Route::get('showexes/{id}','showAllExes');
+    Route::post('deleteexe/{id}','removeExe');
 
     Route::post('create_qual', 'create_qual');
     Route::post('add_exe/{id}', 'addexe');
