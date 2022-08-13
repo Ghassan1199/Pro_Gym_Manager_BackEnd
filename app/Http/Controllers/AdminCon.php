@@ -399,6 +399,7 @@ class AdminCon extends Controller
         $sub->save();
         $coach = coach::find($sub["coach_id"]);
         $sub['coach_name'] = "$coach->first_name $coach->last_name";
+        $sub['required_payment'] = $sub['price']-$paid;
         return response()->json($sub, 200);
     }
 
