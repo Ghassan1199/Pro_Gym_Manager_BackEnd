@@ -78,7 +78,6 @@ class AdminCon extends Controller
     }
 
 
-
     public function addUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -450,7 +449,7 @@ class AdminCon extends Controller
                     $contract['birthday'] = $coach['birthday'];
                     $contract['phone_number'] = $coach['phone_number'];
                     $contract['id'] = $coach['id'];
-                    $contract['img_url']=$coach['img_url'];
+                    $contract['img_url'] = $coach['img_url'];
 
                     $available[]['info'] = $contract;
                 }
