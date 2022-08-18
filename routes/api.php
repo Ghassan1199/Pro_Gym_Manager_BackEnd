@@ -63,8 +63,9 @@ Route::prefix('user')->controller(UsersController::class)->group(function () {
     Route::post('show_data', 'show');
     Route::get('show_all_exe/', 'showAllExes');
     Route::get('show_exe/{id}', 'showExe');
-    Route::get('show_days', 'showDays');
+    Route::post('show_days', 'showDays');
     Route::post('show_sub', 'showSub');
+
 
     Route::post('edit_days', 'editTrainingDays');
 

@@ -52,7 +52,7 @@ class AdminCon extends Controller
 
 
             $admin->save();
-            if ($img) {
+            if (!empty($img)) {
                 $admin->gym()->create([
                     'title' => $request['gym_name'],
                     'address' => $request['gym_address'],
@@ -76,6 +76,8 @@ class AdminCon extends Controller
         $res = admin::find($id);
         return response()->json($res, 200);
     }
+
+
 
     public function addUser(Request $request)
     {
@@ -174,7 +176,7 @@ class AdminCon extends Controller
 
         if ($request['img_url']) {
             $getImage = $request->file('img_url');
-            $imagename = $request['first_name'] . '.' . $getImage->extension();
+            $imagename = $coach['first_name'] . '.' . $getImage->extension();
             $imagepath = public_path() . '/images/coaches';
             $getImage->move($imagepath, $imagename);
             $coach['img_url'] = url('images/coaches/' . $imagename);
@@ -399,7 +401,7 @@ class AdminCon extends Controller
         $sub->save();
         $coach = coach::find($sub["coach_id"]);
         $sub['coach_name'] = "$coach->first_name $coach->last_name";
-        $sub['required_payment'] = $sub['price']-$paid;
+        $sub['required_payment'] = $sub['price'] - $paid;
         return response()->json($sub, 200);
     }
 
@@ -431,7 +433,6 @@ class AdminCon extends Controller
     }
 
 
-
     public function showAvailableCoaches()
     {
 
@@ -439,19 +440,22 @@ class AdminCon extends Controller
         $available = [];
         foreach ($coaches as $coach) {
             $con = $coach->contract()->get()->last();
+            if (!is_null($con)) {
+                if ($con['end_date'] > Carbon::now()) {
+                    $contract['contract'] = $coach->contract()->get()->last();
+                    $contract['first_name'] = $coach['first_name'];
+                    $contract['last_name'] = $coach['last_name'];
+                    $contract['speciality'] = $coach['speciality'];
+                    $contract['email'] = $coach['email'];
+                    $contract['birthday'] = $coach['birthday'];
+                    $contract['phone_number'] = $coach['phone_number'];
+                    $contract['id'] = $coach['id'];
+                    $contract['img_url']=$coach['img_url'];
 
-            if ($con['end_date'] > Carbon::now()) {
-                $contract['contract'] = $coach->contract()->get()->last();
-                $contract['first_name'] = $coach['first_name'];
-                $contract['last_name'] = $coach['last_name'];
-                $contract['speciality'] = $coach['speciality'];
-                $contract['email'] = $coach['email'];
-                $contract['birthday'] = $coach['birthday'];
-                $contract['phone_number'] = $coach['phone_number'];
-                $contract['id'] = $coach['id'];
-
-                $available[]['info'] = $contract;
+                    $available[]['info'] = $contract;
+                }
             }
+
         }
         $res['Available_coaches'] = $available;
         return response()->json($res, 200);
@@ -463,12 +467,15 @@ class AdminCon extends Controller
         $Unavailable = [];
         foreach ($coaches as $coach) {
             $con = $coach->contract()->get()->last();
-            if ($con['end_date'] < Carbon::now()) {
-                $contract['contract'] = $coach->contract()->get()->last();
-                $contract['first_name'] = $coach['first_name'];
-                $contract['last_name'] = $coach['last_name'];
-                $Unavailable[]['info'] = $contract;
+            if (!is_null($con)) {
+                if ($con['end_date'] < Carbon::now()) {
+                    $contract['contract'] = $coach->contract()->get()->last();
+                    $contract['first_name'] = $coach['first_name'];
+                    $contract['last_name'] = $coach['last_name'];
+                    $Unavailable[]['info'] = $contract;
+                }
             }
+
         }
 
         $res['UnAvailable_coaches'] = $Unavailable;

@@ -49,11 +49,10 @@ class UsersController extends Controller
 
     }
 
-    public
-    function showDays()
+    public function showDays()
     {
         $sub = subscription::where('user_id', '=', auth('user-api')->id())->get()->last();
-        $days = $sub->days()->get();
+        $days = $sub->days()->get()->last();
         return response()->json($days, 200);
     }
 

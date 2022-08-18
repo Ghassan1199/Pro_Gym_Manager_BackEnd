@@ -120,7 +120,12 @@ class LoginController extends Controller
 
             $user->last_login = Carbon::now();
             $user['gym'] = gym::find($user['gym_id']);
-
+            $sub = $user->subscription()->get()->last();
+            if($sub['ends_at'] < Carbon::now()){
+                $user['valid']="false";
+            }else{
+                $user['valid']="true";
+            }
             return response(
                 array("message" => "Sign In Successful", "data" => [
                     "user" => $user,
