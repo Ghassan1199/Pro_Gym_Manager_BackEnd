@@ -13,10 +13,7 @@ class AddSomthingNew extends Migration
      */
     public function up()
     {
-        Schema::table('sub_exes', function (Blueprint $table) {
-            $table->foreignId('exe_id')
-                ->references('id')->on('exercies');
-        });
+
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('gym_id')
                 ->references('id')->on('gyms');

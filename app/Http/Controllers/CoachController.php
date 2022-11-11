@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\coach;
 use App\Models\contract;
+use App\Models\exercies;
 use App\Models\subscription;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CoachController extends Controller
@@ -15,18 +17,42 @@ class CoachController extends Controller
     public function showAllUsers()
     {
         $coach = coach::find(auth('coach-api')->id());
-        $users = $coach->Users()->get();
-        $res['users'] = $users;
+        $subs = $coach->subscription()->where('private', '=', '0')->get();
+        $user = [];
+        foreach ($subs as $sub) {
+            $user[] = User::find($sub['user_id']);
+        }
+        $res['users'] = $user;
 
         return response()->json($res, 200);
+
+    }
+
+    public function showAllExes($id)
+    {
+        $sub = subscription::where('user_id', '=', $id)->get()->last();
+        $exe = $sub->exercies()->get();
+        $res['exes']=$exe;
+        return response()->json($res, 200);
+    }
+
+    public function removeExe($id)
+    {
+        $exe = exercies::find($id);
+        $exe->delete();
+        return response()->json(["msg"=>"deleted"],200);
     }
 
     //we need the $id for the coach
     public function showPrivateUsers()
     {
         $coach = coach::find(auth('coach-api')->id());
-        $users = $coach->subscription()->where('private', '=', '1')->get();
-        $res['users'] = $users;
+        $subs = $coach->subscription()->where('private', '=', '1')->get();
+        $user = [];
+        foreach ($subs as $sub) {
+            $user[] = User::find($sub['user_id']);
+        }
+        $res['users'] = $user;
 
         return response()->json($res, 200);
     }

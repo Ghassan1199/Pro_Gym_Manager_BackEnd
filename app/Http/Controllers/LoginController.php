@@ -25,11 +25,11 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(null, 400,["message" => $validator->errors()->first()]);
+            return response()->json(null, 400, ["message" => $validator->errors()->first()]);
         }
 
         if (admin::where('email', $email)->count() <= 0) {
-            return response()->json(null, 400,["message" => "Email does not exist"]);
+            return response()->json(null, 400, ["message" => "Email does not exist"]);
         }
 
         $admin = admin::where('email', $email)->first();
@@ -37,7 +37,7 @@ class LoginController extends Controller
         if (password_verify($password, $admin->password)) {
 
             $admin->last_login = Carbon::now();
-            $admin['gym']=gym::where('id','=',$admin['id'])->get()->last();
+            $admin['gym'] = gym::where('id', '=', $admin['id'])->get()->last();
             return response(
                 array("message" => "Sign In Successful", "data" => [
                     "admin" => $admin,
@@ -49,7 +49,7 @@ class LoginController extends Controller
                 200
             );
         } else {
-            return response()->json(null, 401,["message" => "Wrong Credentials."]);
+            return response()->json(null, 401, ["message" => "Wrong Credentials."]);
         }
     }
 
@@ -78,6 +78,7 @@ class LoginController extends Controller
         if (password_verify($password, $coach->password)) {
 
             $coach->last_login = Carbon::now();
+            $coach['gym'] = gym::find($coach['gym_id']);
 
             return response(
                 array("message" => "Sign In Successful", "data" => [
@@ -90,7 +91,7 @@ class LoginController extends Controller
                 200
             );
         } else {
-            return response(array("message" => "Wrong Credentials."), 400);
+            return response()->json(null, 401, ["message" => "Wrong Credentials."]);
         }
     }
 
@@ -115,10 +116,16 @@ class LoginController extends Controller
         }
         $user = User::where('email', $email)->first();
 
-        if ($user->password == $password) {
+        if (password_verify($password, $user->password)) {
 
             $user->last_login = Carbon::now();
-
+            $user['gym'] = gym::find($user['gym_id']);
+            $sub = $user->subscription()->get()->last();
+            if($sub['ends_at'] < Carbon::now()){
+                $user['valid']="false";
+            }else{
+                $user['valid']="true";
+            }
             return response(
                 array("message" => "Sign In Successful", "data" => [
                     "user" => $user,
@@ -130,7 +137,7 @@ class LoginController extends Controller
                 200
             );
         } else {
-            return response(array("message" => "Wrong Credentials."), 400);
+            return response()->json(null, 401, ["message" => "Wrong Credentials."]);
         }
     }
 }

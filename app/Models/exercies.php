@@ -10,14 +10,14 @@ class exercies extends Model
     public $timestamps = false;
     protected $fillable = [
         'title',
-        'desc'
+        'desc',
+        'sub_id'
     ];
     use HasFactory;
 
-    public function subscriptions()
+    public function subscription()
     {
 
-        return $this->belongsToMany(subscription::class, 'sub_exe',
-            'exercies_id', 'sub_id');
+        return $this->belongsTo(subscription::class, 'sub_id');
     }
 }

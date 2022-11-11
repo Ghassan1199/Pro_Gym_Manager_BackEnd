@@ -17,6 +17,8 @@ class CreateExerciesTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('desc');
+            $table->foreignId('sub_id')
+                ->references('id')->on('subscriptions');
         });
     }
 
